@@ -41,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AddPerProActivity extends AppCompatActivity implements View.OnClickListener{
@@ -92,7 +93,8 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
             String content =eContent.getText().toString();
 
             if(!title.isEmpty() && !content.isEmpty() ){
-                PerPro userPerPro = new PerPro(title, content);
+                String newId = ref.push().getKey();
+                PerPro userPerPro = new PerPro(newId, title, content);
                 addPerPro(userId, userPerPro);
                 userPerProSet = userPerPro;
                 finish();
@@ -101,33 +103,35 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
 
     }
     public void addPerPro(String userId, PerPro userPerPro) {
-        DatabaseReference userRef = ref.child("UserPerPro").child(userId);
+        DatabaseReference userRef = ref.child("UserPerPro").child(userPerPro.getId());
         Query lastQuery = userRef.orderByKey().limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             int lastKey = 0;
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
-                    Object obj = dataSnapshot.getValue();
-                    try {
-                        if (obj instanceof HashMap) {
-                            HashMap<String, Object> hashMap = (HashMap<String, Object>) obj;
-                            ArrayList<Map.Entry<String, Object>> list = new ArrayList<>(hashMap.entrySet());
-                            Map.Entry<String, Object> lastEntry = list.get(list.size() - 1);
-
-                            lastKey = Integer.parseInt(lastEntry.getKey());
-                        }
-                        else {
-                            ArrayList<Map<String, Object>> list = (ArrayList<Map<String, Object>>) obj;
-                            lastKey = Integer.parseInt(list.get(list.size() - 1).get("id").toString());
-                        }
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                int newKey = lastKey + 1;
-                PerPro newUserPerPro = new PerPro(String.valueOf(newKey), userPerPro.getTitle(), userPerPro.getContent());
-                userRef.child(String.valueOf(newKey)).setValue(newUserPerPro);
+//                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+//                    Object obj = dataSnapshot.getValue();
+//                    try {
+//                        if (obj instanceof HashMap) {
+//                            HashMap<String, Object> hashMap = (HashMap<String, Object>) obj;
+//                            ArrayList<Map.Entry<String, Object>> list = new ArrayList<>(hashMap.entrySet());
+//                            Map.Entry<String, Object> lastEntry = list.get(list.size() - 1);
+//
+//                            lastKey = Integer.parseInt(lastEntry.getKey());
+//                        }
+//                        else {
+//                            ArrayList<Map<String, Object>> list = (ArrayList<Map<String, Object>>) obj;
+//                            lastKey = Integer.parseInt(list.get(list.size() - 1).get("id").toString());
+//                        }
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//                int newKey = lastKey + 1;
+                List<String> memberList = new ArrayList<>();
+                memberList.add(userId);
+                PerPro newUserPerPro = new PerPro(userPerPro.getId(),userPerPro.getTitle(), userPerPro.getContent(), userId, memberList);
+                userRef.setValue(newUserPerPro);
             }
 
             @Override

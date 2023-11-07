@@ -28,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;   // TypeToken
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -80,7 +82,7 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
 //        getAllPerPro(userId);
 //    }
     private void getAllPerPro(String userId) {
-        DatabaseReference userRef = ref.child("UserPerPro").child(userId);
+        DatabaseReference userRef = ref.child("UserPerPro");
         List<PerPro> userPerProList = new ArrayList<>();
         userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<DataSnapshot> task) {
@@ -89,10 +91,6 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
                     System.out.println("obj" + obj + " " + obj.getClass());
                     try {
                         ArrayList<Object> list = new ArrayList<>();
-                        if (obj instanceof ArrayList) {
-                            list = (ArrayList<Object>) obj;
-
-                        }
                         if (obj instanceof HashMap) {
                             HashMap<String, Object> hashMap = (HashMap<String, Object>) obj;
 
@@ -103,9 +101,10 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
                                 map.put(entry.getKey(), entry.getValue());
                                 arrayList.add(entry.getValue());
                             }
-                            list = (ArrayList<Object>) arrayList;
+                            list = arrayList;
                         }
 
+                        System.out.println("list" + list + " " + list.getClass());
                         for (Object entry : list) {
                             if(entry == null)
                                 continue;
@@ -113,8 +112,15 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
                             String id = (String) jsonObject.get("id");
                             String title = (String) jsonObject.get("title");
                             String content = (String) jsonObject.get("content");
+                            String ownerId = (String) jsonObject.get("ownerId");
 
-                            PerPro userPerPro = new PerPro(id, title, content);
+                            // Using Gson to convert JSON array to String
+                            Gson gson = new Gson();
+                            String listMember = jsonObject.get("listMember").toString();
+
+                            // Using Gson to convert JSON array as String to List<String>
+                            List<String> memberList = gson.fromJson(listMember, new TypeToken<List<String>>() {}.getType());
+                            PerPro userPerPro = new PerPro(id, title, content, ownerId, memberList);
                             userPerProList.add(userPerPro);
                         }
                         adapter.setList(userPerProList);

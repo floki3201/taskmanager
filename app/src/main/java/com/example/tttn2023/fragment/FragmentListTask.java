@@ -64,10 +64,11 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
         if(FBUser.getCurrent_user() != null) {
             user = FBUser.getCurrent_user();
             userId = user.getUid();
-        } else {
-            account = GGUser.getCurrent_user();
-            userId = account.getId();
         }
+//        else {
+//            account = GGUser.getCurrent_user();
+//            userId = account.getId();
+//        }
         getAllTask(userId);
     }
 

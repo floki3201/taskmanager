@@ -7,12 +7,17 @@ import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PerPro implements Serializable, Parcelable {
     private String id;
     private String title;
     private String content;
+
+    private String ownerId;
+
+    private List<String> listMember;
     protected PerPro(Parcel in) {
         id = in.readString();
         title = in.readString();
@@ -28,9 +33,12 @@ public class PerPro implements Serializable, Parcelable {
         this.content = content;
     }
 
-    public PerPro(String title, String content) {
+    public PerPro(String id, String title, String content, String ownerId, List<String> listMember) {
+        this.id = id;
         this.title = title;
         this.content = content;
+        this.ownerId = ownerId;
+        this.listMember = listMember;
     }
 
     public static final Creator<PerPro> CREATOR = new Creator<PerPro>() {
@@ -67,6 +75,22 @@ public class PerPro implements Serializable, Parcelable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public List<String> getListMember() {
+        return listMember;
+    }
+
+    public void setListMember(List<String> listMember) {
+        this.listMember = listMember;
     }
 
     @Override
