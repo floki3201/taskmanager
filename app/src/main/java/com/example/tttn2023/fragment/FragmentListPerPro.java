@@ -121,7 +121,7 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
                         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
                         recyclerView.setAdapter(adapter);
-                        adapter.setItemListener(FragmentListPerPro.this);
+//                        adapter.setItemListener(FragmentListPerPro.this);
 
                     } catch (Exception e) {
                         throw new RuntimeException(e);
