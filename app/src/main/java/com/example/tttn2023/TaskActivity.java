@@ -15,23 +15,47 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tttn2023.adapter.BottomNavigationPerTask;
+import com.example.tttn2023.model.PerPro;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Serializable;
+
 public class TaskActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
     private ViewPager viewPager;
     private FloatingActionButton fab, fab_back;
     private TabLayout tabLayout;
+    private String projectId = "";
     private FirebaseDatabase database;
     private DatabaseReference ref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+
+        // Check if the Intent contains the "userPerPro" extra
+        if (intent.hasExtra("userPerPro")) {
+            // Retrieve the Serializable object
+            Serializable serializable = intent.getSerializableExtra("userPerPro");
+
+            // Check if the Serializable object is of type PerPro
+            if (serializable instanceof PerPro) {
+                // Cast it to PerPro
+                PerPro perPro = (PerPro) serializable;
+
+                // Now you can use the 'perPro' object as needed
+                // For example, you can access its properties:
+                projectId = perPro.getId();
+                // Do something with perProName
+            }
+        }
+
         navigationView = findViewById(R.id.bottom_nav);
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
@@ -52,7 +76,7 @@ public class TaskActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        BottomNavigationPerTask adapter = new BottomNavigationPerTask(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        BottomNavigationPerTask adapter = new BottomNavigationPerTask(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, projectId);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

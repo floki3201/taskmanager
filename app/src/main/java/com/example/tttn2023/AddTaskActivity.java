@@ -186,7 +186,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
                 int newKey = lastKey + 1;
-                Task newUserTask = new Task(String.valueOf(newKey), userTask.getTitle(), userTask.getDate(), userTask.getTime() ,userTask.getStatus(), userTask.getCategory(), userTask.getDescription());
+                Task newUserTask = new Task(String.valueOf(newKey), userTask.getTitle(), userTask.getDate(), userTask.getTime() ,userTask.getStatus(), userTask.getCategory(), userTask.getDescription(), userTask.getIdProject());
                 userRef.child(String.valueOf(newKey)).setValue(newUserTask);
             }
 

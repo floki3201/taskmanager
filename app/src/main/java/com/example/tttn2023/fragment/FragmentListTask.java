@@ -38,12 +38,17 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
 
     RecycleViewAdapter adapter;
 //    private SQLiteHelper db;
-
+    private String projectId;
     private FirebaseDatabase database;
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private DatabaseReference ref;
     private String userId = "";
+
+    public FragmentListTask(String projectId) {
+        this.projectId = projectId;
+    }
+
 
     @Nullable
     @Override
@@ -129,7 +134,12 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
                             String description = (String) jsonObject.get("description");
                             String status = (String) jsonObject.get("status");
                             String category = (String) jsonObject.get("category");
-                            Task userTask = new Task(id, title, date, time, status, category, description);
+                            String projectId = (String) jsonObject.get("projectId");
+
+                            if (!projectId.equals(FragmentListTask.this.projectId))
+                                continue;
+
+                            Task userTask = new Task(id, title, date, time, status, category, description, projectId);
                             userTaskList.add(userTask);
                         }
                         adapter.setList(userTaskList);

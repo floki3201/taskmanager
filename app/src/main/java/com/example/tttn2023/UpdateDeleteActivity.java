@@ -176,7 +176,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             String time = eTime.getText().toString();
 
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                Task newUserTask = new Task(userTask.getId(),title, date, time, status, category, description);
+                Task newUserTask = new Task(userTask.getId(),title, date, time, status, category, description, "123abc");
                 updateTask(userId, newUserTask);
                 finish();
             }

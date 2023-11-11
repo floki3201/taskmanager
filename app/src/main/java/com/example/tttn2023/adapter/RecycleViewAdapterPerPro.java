@@ -17,10 +17,11 @@ import java.util.List;
 public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAdapterPerPro.HomeViewHolder>{
     @NonNull
     private List<PerPro> list;
-    private ItemListenner itemListener;
+    private ItemListener itemListener;
     public RecycleViewAdapterPerPro() {list = new ArrayList<>();};
+
     public void setItemListener(ItemListener itemListener) {
-        this.itemListener = (ItemListenner) itemListener;
+        this.itemListener = (ItemListener) itemListener;
     }
     public void setList(List<PerPro> list){
         this.list = list;
@@ -45,6 +46,10 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
         return list.size();
     }
 
+    public PerPro getItem(int position) {
+        return list.get(position);
+    }
+
     public class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView title,content;
         public HomeViewHolder(@NonNull View view) {
@@ -65,8 +70,10 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
         void onItemClick(View view, int position);
     }
 
-    private class ItemListenner {
+    private class ItemListenner implements ItemListener {
+        @Override
         public void onItemClick(View view, int adapterPosition) {
+            System.out.println("Hello");
         }
     }
 }

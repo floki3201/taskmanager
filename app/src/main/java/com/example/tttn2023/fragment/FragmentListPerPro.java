@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.R;
+import com.example.tttn2023.TaskActivity;
 import com.example.tttn2023.UpdateDeleteActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
 import com.example.tttn2023.adapter.RecycleViewAdapterPerPro;
@@ -67,14 +68,13 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
         }
         getAllPerPro(userId);
     }
-//    @Override
-//    public void onItemClick(View view, int position) {
-//        //Item item = adapter.getItem(position);
-//        com.example.tttn2023.model.PerPro userTask = adapter.getItem(position);
-//        Intent intent = new Intent(getActivity(), UpdateDeleteActivity.class);
-//        intent.putExtra("userPerPro", (Serializable) userTask);
-//        startActivity(intent);
-//    }
+    @Override
+    public void onItemClick(View view, int position) {
+        PerPro perPro = adapter.getItem(position);
+        Intent intent = new Intent(getActivity(), TaskActivity.class);
+        intent.putExtra("userPerPro", (Serializable) perPro);
+        startActivity(intent);
+    }
 
 //    @Override
 //    public void onResume() {
@@ -114,6 +114,9 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
                             String content = (String) jsonObject.get("content");
                             String ownerId = (String) jsonObject.get("ownerId");
 
+                            if (!ownerId.equals(userId))
+                                continue;
+
                             // Using Gson to convert JSON array to String
                             Gson gson = new Gson();
                             String listMember = jsonObject.get("listMember").toString();
@@ -127,7 +130,7 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
                         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
                         recyclerView.setAdapter(adapter);
-//                        adapter.setItemListener(FragmentListPerPro.this);
+                        adapter.setItemListener(FragmentListPerPro.this);
 
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -137,8 +140,8 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
         });
     }
 
-    @Override
-    public void onItemClick(View view, int position) {
-
-    }
+//    @Override
+//    public void onItemClick(View view, int position) {
+//
+//    }
 }

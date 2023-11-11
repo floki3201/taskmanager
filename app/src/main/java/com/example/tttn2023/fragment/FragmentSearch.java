@@ -199,7 +199,8 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
                             String description = (String) jsonObject.get("description");
                             String status = (String) jsonObject.get("status");
                             String category = (String) jsonObject.get("category");
-                            Task userTask = new Task(id, title, date, time, status, category, description);
+                            String projectId = (String) jsonObject.get("projectId");
+                            Task userTask = new Task(id, title, date, time, status, category, description, projectId);
                             userTaskList.add(userTask);
                         }
                         adapter.setList(userTaskList);

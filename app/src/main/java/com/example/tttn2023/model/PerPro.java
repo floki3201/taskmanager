@@ -104,6 +104,8 @@ public class PerPro implements Serializable, Parcelable {
 //        map.put("idProject", idProject);
         map.put("title", title);
         map.put("content", content);
+        map.put("ownerId", ownerId);
+        map.put("listMember", listMember);
         return map;
     }
     @Override

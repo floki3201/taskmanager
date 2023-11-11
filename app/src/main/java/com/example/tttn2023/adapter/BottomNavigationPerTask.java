@@ -10,19 +10,18 @@ import com.example.tttn2023.fragment.FragmentListTask;
 import com.example.tttn2023.fragment.FragmentSearch;
 
 public class BottomNavigationPerTask extends FragmentPagerAdapter {
+    private String projectId;
 
-    public BottomNavigationPerTask(@NonNull FragmentManager fm, int behavior) {
+    public BottomNavigationPerTask(@NonNull FragmentManager fm, int behavior, String projectId) {
         super(fm, behavior);
+        this.projectId = projectId;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position){
-            case 0:
-                return new FragmentListTask();
-
-//                return new FragmentListPerPro();
+            case 0:return new FragmentListTask(projectId);
             case 1:return new FragmentSearch();
             case 2:return new FragmentInfo();
         }
