@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tttn2023.AddTaskActivity;
 import com.example.tttn2023.R;
 import com.example.tttn2023.TaskActivity;
 import com.example.tttn2023.UpdateDeleteActivity;
@@ -62,10 +64,11 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
         if(FBUser.getCurrent_user() != null) {
             user = FBUser.getCurrent_user();
             userId = user.getUid();
-        } else {
-            account = GGUser.getCurrent_user();
-            userId = account.getId();
         }
+//        else {
+//            account = GGUser.getCurrent_user();
+//            userId = account.getId();
+//        }
         getAllPerPro(userId);
     }
     @Override
@@ -76,11 +79,11 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
         startActivity(intent);
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        getAllPerPro(userId);
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        getAllPerPro(userId);
+    }
     private void getAllPerPro(String userId) {
         DatabaseReference userRef = ref.child("UserPerPro");
         List<PerPro> userPerProList = new ArrayList<>();

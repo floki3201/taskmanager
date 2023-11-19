@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
+import com.example.tttn2023.model.PerPro;
 import com.example.tttn2023.model.Task;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -36,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -54,18 +56,28 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private String userId = "";
+    private String projectId = "";
     private Task userTaskSet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task_nv);
         initView();
+
         btUpdate.setOnClickListener(this);
         btCancel.setOnClickListener(this);
         eDate.setOnClickListener(this);
         eTime.setOnClickListener(this);
         btSetAlarm.setOnClickListener(this);
 
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("projectId")) {
+            Serializable serializable = intent.getSerializableExtra("projectId");
+            if (serializable instanceof String) {
+                projectId = (String) serializable;
+            }
+        }
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
         createNotificationChannel();
@@ -148,7 +160,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             String status = sp.getSelectedItem().toString();
             String category =sp2.getSelectedItem().toString();
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                Task userTask = new Task(title, date, time, status, category, description);
+                Task userTask = new Task(title, date, time, status, category, description, projectId);
                 addTask(userId, userTask);
                 userTaskSet = userTask;
                 finish();
@@ -186,7 +198,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
                 int newKey = lastKey + 1;
-                Task newUserTask = new Task(String.valueOf(newKey), userTask.getTitle(), userTask.getDate(), userTask.getTime() ,userTask.getStatus(), userTask.getCategory(), userTask.getDescription(), userTask.getIdProject());
+                Task newUserTask = new Task(String.valueOf(newKey), userTask.getTitle(), userTask.getDate(), userTask.getTime() ,userTask.getStatus(), userTask.getCategory(), userTask.getDescription(), userTask.getProjectId());
                 userRef.child(String.valueOf(newKey)).setValue(newUserTask);
             }
 

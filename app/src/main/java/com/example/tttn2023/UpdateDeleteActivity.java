@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
+import com.example.tttn2023.model.PerPro;
 import com.example.tttn2023.model.Task;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -35,6 +36,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Serializable;
+import java.sql.SQLOutput;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,6 +56,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private String userId = "";
+    private String projectId = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,10 +69,29 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
         eTime.setOnClickListener(this);
         btSetAlarm.setOnClickListener(this);
         Intent intent = getIntent();
-        userTask=(Task) intent.getSerializableExtra("userTask");
-        intent.removeExtra("userTask");
+        userTask= intent.getParcelableExtra("userTask");
+        projectId = (String) intent.getSerializableExtra("projectId");
+//        intent.removeExtra("userTask");
 
-        System.out.println("userTaskId: " + userTask.getId());
+        System.out.println(projectId);
+////        Intent intent = getIntent();
+
+//        if (intent.hasExtra("userTask")) {
+//            // Retrieve the Serializable object
+//            Serializable serializable = intent.getSerializableExtra("userTask");
+//
+//            // Check if the Serializable object is of type PerPro
+//            if (serializable instanceof Task) {
+//                // Cast it to PerPro
+//                 userTask = (Task) serializable;
+//
+//                // Now you can use the 'perPro' object as needed
+//                // For example, you can access its properties:
+//                projectId = userTask.getProjectId();
+//                System.out.println(userTask.getProjectId() +userTask.getTitle());
+//            }
+//        }
+
         eTitle.setText(userTask.getTitle());
         eTitle2.setText(userTask.getDescription());
         eDate.setText(userTask.getDate());
@@ -176,7 +199,8 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             String time = eTime.getText().toString();
 
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                Task newUserTask = new Task(userTask.getId(),title, date, time, status, category, description, "123abc");
+                Task newUserTask = new Task(userTask.getId(),title, date, time, status, category, description, projectId);
+                System.out.println("project ID" + newUserTask.getProjectId());
                 updateTask(userId, newUserTask);
                 finish();
             }

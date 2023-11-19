@@ -1,5 +1,6 @@
 package com.example.tttn2023.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tttn2023.UpdateDeleteActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
@@ -33,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,11 +75,14 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
         if(FBUser.getCurrent_user() != null) {
             user = FBUser.getCurrent_user();
             userId = user.getUid();
-        } else {
-            account = GGUser.getCurrent_user();
-            userId = account.getId();
         }
-        getAllTask(userId);
+//        else {
+//            account = GGUser.getCurrent_user();
+//            userId = account.getId();
+//        }
+
+
+//        getAllTask(userId);
 
         svName.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -103,10 +109,11 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
                 if(FBUser.getCurrent_user() != null) {
                     user = FBUser.getCurrent_user();
                     findTaskByTitle(user.getUid(), s, searchType);
-                } else {
-                    account = GGUser.getCurrent_user();
-                    findTaskByTitle(account.getId(), s, searchType);
                 }
+//                else {
+//                    account = GGUser.getCurrent_user();
+//                    findTaskByTitle(account.getId(), s, searchType);
+//                }
                 return true;
             }
         });
@@ -119,7 +126,7 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
                 String searchType = "status";
 
                 if(s.equalsIgnoreCase("Tất cả tình trạng")) {
-                    getAllTask(userId);
+//                    getAllTask(userId);
                 } else {
                     findTaskByTitle(userId, s, searchType);
                 }
@@ -134,6 +141,7 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
 
 
     }
+
 
     private void initView(View view) {
         recyclerView=view.findViewById(R.id.recycleView);
@@ -158,64 +166,65 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
 
         }
     }
-    public void getAllTask(String userId) {
-        DatabaseReference userRef = ref.child("UserTask").child(userId);
-        List<Task> userTaskList = new ArrayList<>();
-
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-
-            @Override
-            public void onComplete(@NonNull com.google.android.gms.tasks.Task<DataSnapshot> task) {
-                if (task.isSuccessful() && task.getResult().getValue() != null) {
-                    Object obj = task.getResult().getValue();
-                    System.out.println("obj" + obj + " " + obj.getClass());
-                    try {
-                        ArrayList<Object> list = new ArrayList<>();
-                        if (obj instanceof ArrayList) {
-                            list = (ArrayList<Object>) obj;
-
-                        }
-                        if (obj instanceof HashMap) {
-                            HashMap<String, Object> hashMap = (HashMap<String, Object>) obj;
-
-                            ArrayList<Object> arrayList = new ArrayList<>();
-                            for (Map.Entry<String, Object> entry : hashMap.entrySet()) {
-
-                                HashMap<String, Object> map = new HashMap<>();
-                                map.put(entry.getKey(), entry.getValue());
-                                arrayList.add(entry.getValue());
-                            }
-                            list = (ArrayList<Object>) arrayList;
-                        }
-
-                        for (Object entry : list) {
-                            if(entry == null)
-                                continue;
-                            JSONObject jsonObject = new JSONObject((Map) entry);
-                            String id = (String) jsonObject.get("id");
-                            String title = (String) jsonObject.get("title");
-                            String date = (String) jsonObject.get("date");
-                            String time = (String) jsonObject.get("time");
-                            String description = (String) jsonObject.get("description");
-                            String status = (String) jsonObject.get("status");
-                            String category = (String) jsonObject.get("category");
-                            String projectId = (String) jsonObject.get("projectId");
-                            Task userTask = new Task(id, title, date, time, status, category, description, projectId);
-                            userTaskList.add(userTask);
-                        }
-                        adapter.setList(userTaskList);
-                        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
-                        recyclerView.setLayoutManager(manager);
-                        recyclerView.setAdapter(adapter);
-                        adapter.setItemListener(FragmentSearch.this);
-
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        });
-    }
+//    public void getAllTask(String userId) {
+//        DatabaseReference userRef = ref.child("UserTask").child(userId);
+//        List<Task> userTaskList = new ArrayList<>();
+//        System.out.println("userId: "+ userId);
+//
+//        userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+//
+//            @Override
+//            public void onComplete(@NonNull com.google.android.gms.tasks.Task<DataSnapshot> task) {
+//                if (task.isSuccessful() && task.getResult().getValue() != null) {
+//                    Object obj = task.getResult().getValue();
+//                    System.out.println("obj" + obj + " " + obj.getClass());
+//                    try {
+//                        ArrayList<Object> list = new ArrayList<>();
+//                        if (obj instanceof ArrayList) {
+//                            list = (ArrayList<Object>) obj;
+//
+//                        }
+//                        if (obj instanceof HashMap) {
+//                            HashMap<String, Object> hashMap = (HashMap<String, Object>) obj;
+//
+//                            ArrayList<Object> arrayList = new ArrayList<>();
+//                            for (Map.Entry<String, Object> entry : hashMap.entrySet()) {
+//
+//                                HashMap<String, Object> map = new HashMap<>();
+//                                map.put(entry.getKey(), entry.getValue());
+//                                arrayList.add(entry.getValue());
+//                            }
+//                            list = (ArrayList<Object>) arrayList;
+//                        }
+//
+//                        for (Object entry : list) {
+//                            if(entry == null)
+//                                continue;
+//                            JSONObject jsonObject = new JSONObject((Map) entry);
+//                            String id = (String) jsonObject.get("id");
+//                            String title = (String) jsonObject.get("title");
+//                            String date = (String) jsonObject.get("date");
+//                            String time = (String) jsonObject.get("time");
+//                            String description = (String) jsonObject.get("description");
+//                            String status = (String) jsonObject.get("status");
+//                            String category = (String) jsonObject.get("category");
+//                            String projectId = (String) jsonObject.get("projectId");
+//                            Task userTask = new Task(id, title, date, time, status, category, description, projectId);
+//                            userTaskList.add(userTask);
+//                        }
+//                        adapter.setList(userTaskList);
+//                        LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+//                        recyclerView.setLayoutManager(manager);
+//                        recyclerView.setAdapter(adapter);
+//                        adapter.setItemListener(FragmentSearch.this);
+//
+//                    } catch (Exception e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     public void findTaskByTitle(String userId, String key, String searchType) {
         DatabaseReference userRef = ref.child("UserTask").child(userId);
@@ -243,14 +252,21 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
         });
     }
 
-    @Override
+//    @Override
+//    public void onItemClick(View view, int position) {
+//
+//    }
     public void onItemClick(View view, int position) {
-
+        //Item item = adapter.getItem(position);
+        Task userTask = adapter.getItem(position);
+        Intent intent = new Intent(getActivity(), UpdateDeleteActivity.class);
+        intent.putExtra("userTask", (Serializable) userTask);
+        startActivity(intent);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getAllTask(userId);
+//        getAllTask(userId);
     }
 }

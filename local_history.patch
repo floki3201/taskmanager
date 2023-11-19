@@ -1,0 +1,17 @@
+Index: app/src/main/java/com/example/tttn2023/adapter/RecycleViewAdapterPerPro.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/tttn2023/adapter/RecycleViewAdapterPerPro.java b/app/src/main/java/com/example/tttn2023/adapter/RecycleViewAdapterPerPro.java
+--- a/app/src/main/java/com/example/tttn2023/adapter/RecycleViewAdapterPerPro.java	
++++ b/app/src/main/java/com/example/tttn2023/adapter/RecycleViewAdapterPerPro.java	(date 1700305779115)
+@@ -93,7 +93,7 @@
+ //                    intent.putExtra("listMember", clickedItem.getListMember());
+                     // Add other data as needed
+                     view.getContext().startActivity(intent);
+-                    System.out.println("nhận");
++                    System.out.println("perpro"+);
+                 }
+             }
+         }

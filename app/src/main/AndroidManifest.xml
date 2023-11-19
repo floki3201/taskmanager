@@ -54,6 +54,7 @@
             android:name=".Main0Activity"
             android:exported="false" />
         <activity android:name=".DestinationActivity" />
+        <activity android:name="com.example.tttn2023.UpdateDeleteJointProActivity" />
 
         <receiver android:name=".AlarmReceiver" />
     </application>

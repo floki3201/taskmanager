@@ -37,22 +37,15 @@
                     android:layout_marginLeft="10dp"/>
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btUpdate"
                     android:layout_width="48dp"
                     android:layout_height="30dp"
                     android:layout_marginRight="4dp"
                     android:background="@color/app_theme"
-                    android:text="U"
+                    android:text="U/D"
                     android:textColor="#263238"
                     tools:ignore="TouchTargetSizeCheck" />
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="48dp"
-                    android:layout_height="30dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/button_red"
-                    android:text="D"
-                    android:textColor="#FFF8E1"
-                    tools:ignore="TouchTargetSizeCheck" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

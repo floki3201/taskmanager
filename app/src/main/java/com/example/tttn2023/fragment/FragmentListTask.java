@@ -2,6 +2,7 @@ package com.example.tttn2023.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,7 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
     private RecyclerView recyclerView;
 
     RecycleViewAdapter adapter;
-//    private SQLiteHelper db;
+
     private String projectId;
     private FirebaseDatabase database;
     private FirebaseUser user;
@@ -61,7 +62,6 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recycleView);
         adapter = new RecycleViewAdapter();
-
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
 
@@ -83,7 +83,9 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
         //Item item = adapter.getItem(position);
         Task userTask = adapter.getItem(position);
         Intent intent = new Intent(getActivity(), UpdateDeleteActivity.class);
-        intent.putExtra("userTask", (Serializable) userTask);
+        System.out.println("userTask: " +userTask.toMap());
+        intent.putExtra("userTask", (Parcelable) userTask);
+        intent.putExtra("projectId", userTask.getProjectId());
         startActivity(intent);
     }
 

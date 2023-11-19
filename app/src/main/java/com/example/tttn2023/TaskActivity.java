@@ -66,6 +66,7 @@ public class TaskActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TaskActivity.this, AddTaskActivity.class);
+                intent.putExtra("projectId", projectId);
                 startActivity(intent);
             }
         });

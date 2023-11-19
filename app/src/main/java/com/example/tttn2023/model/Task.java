@@ -25,24 +25,25 @@ public class Task implements Serializable, Parcelable {
     public Task() {
     }
 
-    public Task(String title, String date, String time, String status, String category, String description) {
+    public Task(String title, String date, String time, String status, String category, String description, String projectId) {
         this.title = title;
         this.date = date;
         this.time = time;
         this.category = category;
         this.status = status;
         this.description = description;
+        this.projectId = projectId;
     }
 
     public Task(String id, String title, String date, String time, String status, String category, String description, String projectId) {
         this.id = id;
-        this.projectId = projectId;
         this.title = title;
         this.date = date;
         this.time = time;
         this.category = category;
         this.status = status;
         this.description = description;
+        this.projectId = projectId;
     }
 
     protected Task(Parcel in) {
@@ -133,11 +134,11 @@ public class Task implements Serializable, Parcelable {
         this.description = description;
     }
 
-    public String getIdProject() {
+    public String getProjectId() {
         return projectId;
     }
 
-    public void setIdProject(String projectId) {
+    public void setProjectId(String projectId) {
         this.projectId = projectId;
     }
 
@@ -145,13 +146,13 @@ public class Task implements Serializable, Parcelable {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
-        map.put("projectId", projectId);
         map.put("title", title);
         map.put("date", date);
         map.put("time", time);
         map.put("category", category);
         map.put("status", status);
         map.put("description", description);
+        map.put("projectId", projectId);
         return map;
     }
 
@@ -163,13 +164,13 @@ public class Task implements Serializable, Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(id);
-        parcel.writeString(projectId);
         parcel.writeString(title);
         parcel.writeString(date);
         parcel.writeString(time);
         parcel.writeString(category);
         parcel.writeString(status);
         parcel.writeString(description);
+        parcel.writeString(projectId);
         parcel.writeString(alarmSet);
     }
 }

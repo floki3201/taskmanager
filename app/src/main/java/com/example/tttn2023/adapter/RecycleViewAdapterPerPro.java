@@ -1,16 +1,24 @@
 package com.example.tttn2023.adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tttn2023.AddPerProActivity;
+import com.example.tttn2023.PerProActivity;
 import com.example.tttn2023.R;
+import com.example.tttn2023.UpdateDeleteJointProActivity;
 import com.example.tttn2023.model.PerPro;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,17 +60,42 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
 
     public class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView title,content;
+        private Button btUpdate;
         public HomeViewHolder(@NonNull View view) {
             super(view);
             title = view.findViewById(R.id.tvTitle);
             content = view.findViewById(R.id.tvContent);
+            btUpdate = view.findViewById(R.id.btUpdate);
             view.setOnClickListener(this);
+            btUpdate.setOnClickListener(this);
+//            itemView.findViewById(R.id.btUpdate).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                }
+//            });
         }
 
         @Override
         public void onClick(View view) {
             if(itemListener!=null){
                 itemListener.onItemClick(view,getAdapterPosition());
+            }
+            if(view.getId() == R.id.btUpdate){
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    // Retrieve the clicked item
+                    PerPro clickedItem = list.get(position);
+                    // Start a new activity with the information of the clicked item
+                    Intent intent = new Intent(view.getContext(), UpdateDeleteJointProActivity.class);
+                    intent.putExtra("projectId", clickedItem.getId());
+                    intent.putExtra("title", clickedItem.getTitle());
+                    intent.putExtra("content", clickedItem.getContent());
+                    intent.putExtra("ownerId", clickedItem.getOwnerId());
+//                    intent.putExtra("listMember", (Serializable) clickedItem.getListMember());
+                    // Add other data as needed
+                    view.getContext().startActivity(intent);
+//                    System.out.println("perpro"+intent);
+                }
             }
         }
     }

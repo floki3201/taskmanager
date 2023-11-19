@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Thêm dự án"
+            android:text="Chỉnh sửa dự án"
             android:textSize="22dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2"
+        android:weightSum="3"
         android:layout_marginTop="20dp">
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="wrap_content"
@@ -63,12 +63,20 @@
             android:id="@+id/btUpdate"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
-            android:text="Thêm mới"
+            android:text="Chỉnh sửa"
             android:background="@drawable/button_bg"/>
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btCancel"
+            android:id="@+id/btRemove"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:text="Xóa"
+            android:background="@drawable/button_bg_3"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btBack"
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
             android:text="Hủy"
