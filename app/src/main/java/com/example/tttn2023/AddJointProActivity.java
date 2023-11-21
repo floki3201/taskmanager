@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
+import com.example.tttn2023.model.JointPro;
 import com.example.tttn2023.model.PersonalPro;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,8 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPerProActivity extends AppCompatActivity implements View.OnClickListener{
-
+public class AddJointProActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText eTitle,eContent;
     private Button btUpdate,btCancel;
     private FirebaseDatabase database;
@@ -35,11 +35,12 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private String userId = "";
-    private PersonalPro userPerProSet;
+    private JointPro userJointProSet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_project_nv);
+        setContentView(R.layout.activity_add_project_ql);
         initView();
         btUpdate.setOnClickListener(this);
         btCancel.setOnClickListener(this);
@@ -56,13 +57,25 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private void initView() {
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Task Manager Reminder Channel";
+            String description = "Cấp quyền để nhận thông báo cho ứng dụng";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("taskmanagement", name, importance);
+            channel.setDescription(description);
 
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+        }
+    }
+
+    private void initView() {
         eTitle=findViewById(R.id.eTitle);
         eContent=findViewById(R.id.eContent);
         btUpdate=findViewById(R.id.btUpdate);
         btCancel=findViewById(R.id.btCancel);
-
     }
 
     @Override
@@ -76,16 +89,16 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
 
             if(!title.isEmpty() && !content.isEmpty() ){
                 String newId = ref.push().getKey();
-                PersonalPro userPerPro = new PersonalPro(newId, title, content);
-                addPerPro(userId, userPerPro);
-                userPerProSet = userPerPro;
+                JointPro userJointPro = new JointPro(newId, title, content);
+                addJointPro(userId, userJointPro);
+                userJointProSet = userJointPro;
                 finish();
             }
         }
-
     }
-    public void addPerPro(String userId, PersonalPro userPerPro) {
-        DatabaseReference userRef = ref.child("UserPerPro").child(userPerPro.getId());
+
+    private void addJointPro(String userId, JointPro userJointPro) {
+        DatabaseReference userRef = ref.child("UserJointPro").child(userJointPro.getId());
         Query lastQuery = userRef.orderByKey().limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             int lastKey = 0;
@@ -112,7 +125,7 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
 //                int newKey = lastKey + 1;
                 List<String> memberList = new ArrayList<>();
                 memberList.add(userId);
-                PersonalPro newUserPerPro = new PersonalPro(userPerPro.getId(),userPerPro.getTitle(), userPerPro.getContent(), userId, memberList);
+                PersonalPro newUserPerPro = new PersonalPro(userJointPro.getId(),userJointPro.getTitle(), userJointPro.getContent(), userId, memberList);
                 userRef.setValue(newUserPerPro);
             }
 
@@ -121,24 +134,5 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
 
             }
         });
-    }
-
-
-
-    private void createNotificationChannel() {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Task Manager Reminder Channel";
-            String description = "Cấp quyền để nhận thông báo cho ứng dụng";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel channel = new NotificationChannel("taskmanagement", name, importance);
-            channel.setDescription(description);
-
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-
-        }
-
-
     }
 }

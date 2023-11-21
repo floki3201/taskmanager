@@ -11,46 +11,56 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.R;
+import com.example.tttn2023.UpdateDeleteJointProActivity;
 import com.example.tttn2023.UpdateDeletePerProActivity;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.JointPro;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAdapterPerPro.HomeViewHolder>{
+public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleViewAdapterJointPro.HomeViewHolder> {
     @NonNull
-    private List<PersonalPro> list;
+    private List<JointPro> list;
     private ItemListener itemListener;
-    public RecycleViewAdapterPerPro() {list = new ArrayList<>();};
+    public RecycleViewAdapterJointPro() {list = new ArrayList<>();}
 
-    public void setItemListener(ItemListener itemListener) {
-        this.itemListener = (ItemListener) itemListener;
-    }
-    public void setList(List<PersonalPro> list){
-        this.list = list;
-        notifyDataSetChanged();
-    }
+    @NonNull
     @Override
     public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_project,parent,false);
 
-        return new HomeViewHolder(view);
+        return new RecycleViewAdapterJointPro.HomeViewHolder(view);
     }
 
+    public void setItemListener(RecycleViewAdapterJointPro.ItemListener itemListener) {
+        this.itemListener = (RecycleViewAdapterJointPro.ItemListener) itemListener;
+    }
+    public void setList(List<JointPro> list){
+        this.list = list;
+        notifyDataSetChanged();
+    }
+//    @Override
+//    public RecycleViewAdapterJointPro.HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        return null;
+//    }
+
     @Override
-    public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
-        PersonalPro userPerProList = list.get(position);
-        holder.title.setText(userPerProList.getTitle());
-        holder.content.setText(userPerProList.getContent());
+    public void onBindViewHolder(@NonNull RecycleViewAdapterJointPro.HomeViewHolder holder, int position) {
+        JointPro userJointProList = list.get(position);
+        holder.title.setText(userJointProList.getTitle());
+        holder.content.setText(userJointProList.getContent());
     }
 
     @Override
     public int getItemCount() {
         return list.size();
     }
-
-    public PersonalPro getItem(int position) {
+    public JointPro getItem(int position) {
         return list.get(position);
+    }
+
+    public interface ItemListener {
+        void onItemClick(View view, int position);
     }
 
     public class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -63,11 +73,6 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
             btUpdate = view.findViewById(R.id.btUpdate);
             view.setOnClickListener(this);
             btUpdate.setOnClickListener(this);
-//            itemView.findViewById(R.id.btUpdate).setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                }
-//            });
         }
 
         @Override
@@ -79,9 +84,9 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     // Retrieve the clicked item
-                    PersonalPro clickedItem = list.get(position);
+                    JointPro clickedItem = list.get(position);
                     // Start a new activity with the information of the clicked item
-                    Intent intent = new Intent(view.getContext(), UpdateDeletePerProActivity.class);
+                    Intent intent = new Intent(view.getContext(), UpdateDeleteJointProActivity.class);
                     intent.putExtra("projectId", clickedItem.getId());
                     intent.putExtra("title", clickedItem.getTitle());
                     intent.putExtra("content", clickedItem.getContent());
@@ -92,16 +97,6 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
 //                    System.out.println("perpro"+intent);
                 }
             }
-        }
-    }
-    public interface ItemListener{
-        void onItemClick(View view, int position);
-    }
-
-    private class ItemListenner implements ItemListener {
-        @Override
-        public void onItemClick(View view, int adapterPosition) {
-            System.out.println("Hello");
         }
     }
 }

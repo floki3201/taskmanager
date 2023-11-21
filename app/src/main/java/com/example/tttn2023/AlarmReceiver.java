@@ -11,18 +11,18 @@ import android.os.Parcelable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.tttn2023.model.Task;
+import com.example.tttn2023.model.PersonalTask;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
         Intent i = new Intent(context, DestinationActivity.class);
-        Task userTask = intent.getParcelableExtra("task");
-        i.putExtra("task", (Parcelable) userTask);
+        PersonalTask userPersonalTask = intent.getParcelableExtra("task");
+        i.putExtra("task", (Parcelable) userPersonalTask);
         intent.removeExtra("task");
 
-        String message = "Bạn có công việc cần làm: " + userTask.getTitle();
+        String message = "Bạn có công việc cần làm: " + userPersonalTask.getTitle();
         String action = "Nhấn vào đây để xem chi tiết";
 
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

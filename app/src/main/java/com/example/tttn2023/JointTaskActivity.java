@@ -1,9 +1,5 @@
 package com.example.tttn2023;
 
-//import static android.os.Build.VERSION_CODES.R;
-
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -14,25 +10,47 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import com.example.tttn2023.adapter.BottomNavigationPerPro;
+import com.example.tttn2023.adapter.BottomNavigationJointTask;
 import com.example.tttn2023.adapter.BottomNavigationPerTask;
+import com.example.tttn2023.model.JointPro;
+import com.example.tttn2023.model.PersonalPro;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class PerProActivity extends AppCompatActivity {
+import java.io.Serializable;
+
+public class JointTaskActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
     private ViewPager viewPager;
     private FloatingActionButton fab, fab_back;
     private TabLayout tabLayout;
+    private String projectId = "";
     private FirebaseDatabase database;
     private DatabaseReference ref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+
+        // Check if the Intent contains the "userPerPro" extra
+        if (intent.hasExtra("userJointPro")) {
+            // Retrieve the Serializable object
+            Serializable serializable = intent.getSerializableExtra("userJointPro");
+
+            // Check if the Serializable object is of type PerPro
+            if (serializable instanceof JointPro) {
+                JointPro jointPro = (JointPro) serializable;
+                projectId = jointPro.getId();
+                System.out.println("IdProject      :" + projectId);
+                // Do something with perProName
+            }
+        }
+
         navigationView = findViewById(R.id.bottom_nav);
         viewPager = findViewById(R.id.viewPager);
         tabLayout = findViewById(R.id.tabLayout);
@@ -42,19 +60,19 @@ public class PerProActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PerProActivity.this, AddPerProActivity.class);
+                Intent intent = new Intent(JointTaskActivity.this, AddJointTaskActivity.class);
+                intent.putExtra("projectId", projectId);
                 startActivity(intent);
             }
         });
         fab_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent  = new Intent(PerProActivity.this,Main0Activity.class);
+                Intent intent  = new Intent(JointTaskActivity.this, JointProActivity.class);
                 startActivity(intent);
             }
         });
-        // liên quan đến việc hiện list project
-        BottomNavigationPerPro adapter = new BottomNavigationPerPro(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        BottomNavigationJointTask adapter = new BottomNavigationJointTask(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, projectId);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -64,7 +82,6 @@ public class PerProActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                System.out.println("position     " + position );
                 switch (position){
                     case 0: navigationView.getMenu().findItem(R.id.mHome).setChecked(true);
                         break;

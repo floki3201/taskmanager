@@ -9,47 +9,47 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.R;
+import com.example.tttn2023.model.JointTask;
 import com.example.tttn2023.model.PersonalTask;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RecycleViewAdapter  extends RecyclerView.Adapter<RecycleViewAdapter.HomeViewHolder>{
-    private List<PersonalTask> list;
+public class RecycleViewAdapterJointTask extends RecyclerView.Adapter<RecycleViewAdapterJointTask.HomeViewHolder>{
+    private List<JointTask> list;
 
-    private ItemListener itemListener;
-    public RecycleViewAdapter() {
+    private RecycleViewAdapterJointTask.ItemListener itemListener;
+    public RecycleViewAdapterJointTask() {
         list = new ArrayList<>();
     }
-    public void setItemListener(ItemListener itemListener) {
+    public void setItemListener(RecycleViewAdapterJointTask.ItemListener itemListener) {
         this.itemListener = itemListener;
     }
 
-    public void setList(List<PersonalTask> list) {
+    public void setList(List<JointTask> list) {
         this.list = list;
         notifyDataSetChanged();
     }
-    public PersonalTask getItem(int position){
+    public JointTask getItem(int position){
         return list.get(position);
     }
-
     @NonNull
     @Override
-    public HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecycleViewAdapterJointTask.HomeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_task,parent,false);
 
         return new HomeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
-        PersonalTask userPersonalTask = list.get(position);
-        holder.title.setText(userPersonalTask.getTitle());
-        holder.title2.setText(userPersonalTask.getDescription());
-        holder.date.setText(userPersonalTask.getDate());
-        holder.time.setText(userPersonalTask.getTime());
-        holder.category.setText(userPersonalTask.getStatus());
-        holder.category2.setText(userPersonalTask.getCategory());
+    public void onBindViewHolder(@NonNull RecycleViewAdapterJointTask.HomeViewHolder holder, int position) {
+        JointTask userJointTask = list.get(position);
+        holder.title.setText(userJointTask.getTitle());
+        holder.title2.setText(userJointTask.getDescription());
+        holder.date.setText(userJointTask.getDate());
+        holder.time.setText(userJointTask.getTime());
+        holder.category.setText(userJointTask.getStatus());
+        holder.category2.setText(userJointTask.getEmployeeId());
     }
 
     @Override
@@ -59,7 +59,6 @@ public class RecycleViewAdapter  extends RecyclerView.Adapter<RecycleViewAdapter
 
     public class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView title,category,title2,date,time, category2;
-
         public HomeViewHolder(@NonNull View view) {
             super(view);
             title = view.findViewById(R.id.tvTitle);
@@ -70,7 +69,6 @@ public class RecycleViewAdapter  extends RecyclerView.Adapter<RecycleViewAdapter
             category2 = view.findViewById(R.id.tvCategory2);
             view.setOnClickListener(this);
         }
-
         @Override
         public void onClick(View view) {
             if(itemListener!=null){
@@ -78,6 +76,7 @@ public class RecycleViewAdapter  extends RecyclerView.Adapter<RecycleViewAdapter
             }
         }
     }
+
     public interface ItemListener{
         void onItemClick(View view,int position);
     }

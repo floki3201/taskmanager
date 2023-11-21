@@ -10,30 +10,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PerPro implements Serializable, Parcelable {
+public class PersonalPro implements Serializable, Parcelable {
     private String id;
     private String title;
     private String content;
-
     private String ownerId;
-
     private List<String> listMember;
-    protected PerPro(Parcel in) {
+    protected PersonalPro(Parcel in) {
         id = in.readString();
         title = in.readString();
         content = in.readString();
     }
 
-    public PerPro() {
+    public PersonalPro() {
     }
 
-    public PerPro(String id,String title, String content) {
+    public PersonalPro(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
-    public PerPro(String id, String title, String content, String ownerId, List<String> listMember) {
+    public PersonalPro(String id, String title, String content, String ownerId, List<String> listMember) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -41,15 +39,15 @@ public class PerPro implements Serializable, Parcelable {
         this.listMember = listMember;
     }
 
-    public static final Creator<PerPro> CREATOR = new Creator<PerPro>() {
+    public static final Creator<PersonalPro> CREATOR = new Creator<PersonalPro>() {
         @Override
-        public PerPro createFromParcel(Parcel in) {
-            return new PerPro(in);
+        public PersonalPro createFromParcel(Parcel in) {
+            return new PersonalPro(in);
         }
 
         @Override
-        public PerPro[] newArray(int size) {
-            return new PerPro[size];
+        public PersonalPro[] newArray(int size) {
+            return new PersonalPro[size];
         }
     };
 

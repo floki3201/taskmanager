@@ -51,10 +51,25 @@
             android:name=".PerProActivity"
             android:exported="false" />
         <activity
+            android:name=".JointProActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UpdateDeleteJointProActivity"
+            android:exported="false" />
+        <activity
+            android:name=".JointTaskActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddJointProActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddJointTaskActivity"
+            android:exported="false" />
+        <activity
             android:name=".Main0Activity"
             android:exported="false" />
         <activity android:name=".DestinationActivity" />
-        <activity android:name="com.example.tttn2023.UpdateDeleteJointProActivity" />
+        <activity android:name="com.example.tttn2023.UpdateDeletePerProActivity" />
 
         <receiver android:name=".AlarmReceiver" />
     </application>

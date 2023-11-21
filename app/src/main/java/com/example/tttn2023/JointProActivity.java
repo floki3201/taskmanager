@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.tttn2023.adapter.BottomNavigationJointPro;
 import com.example.tttn2023.adapter.BottomNavigationPerPro;
 import com.example.tttn2023.adapter.BottomNavigationPerTask;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -22,7 +23,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class PerProActivity extends AppCompatActivity {
+public class JointProActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
     private ViewPager viewPager;
     private FloatingActionButton fab, fab_back;
@@ -42,19 +43,19 @@ public class PerProActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PerProActivity.this, AddPerProActivity.class);
+                Intent intent = new Intent(JointProActivity.this, AddJointProActivity.class);
                 startActivity(intent);
             }
         });
         fab_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent  = new Intent(PerProActivity.this,Main0Activity.class);
+                Intent intent  = new Intent(JointProActivity.this,Main0Activity.class);
                 startActivity(intent);
             }
         });
         // liên quan đến việc hiện list project
-        BottomNavigationPerPro adapter = new BottomNavigationPerPro(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        BottomNavigationJointPro adapter = new BottomNavigationJointPro(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -64,7 +65,7 @@ public class PerProActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                System.out.println("position     " + position );
+                System.out.println("position:   "+position);
                 switch (position){
                     case 0: navigationView.getMenu().findItem(R.id.mHome).setChecked(true);
                         break;

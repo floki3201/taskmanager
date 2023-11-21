@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tttn2023.UpdateDeleteActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
 import com.example.tttn2023.model.FBUser;
-import com.example.tttn2023.model.GGUser;
 import com.example.tttn2023.R;
-import com.example.tttn2023.model.Task;
+import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,7 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,11 +79,11 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
     @Override
     public void onItemClick(View view, int position) {
         //Item item = adapter.getItem(position);
-        Task userTask = adapter.getItem(position);
+        PersonalTask userPersonalTask = adapter.getItem(position);
         Intent intent = new Intent(getActivity(), UpdateDeleteActivity.class);
-        System.out.println("userTask: " +userTask.toMap());
-        intent.putExtra("userTask", (Parcelable) userTask);
-        intent.putExtra("projectId", userTask.getProjectId());
+        System.out.println("userTask: " + userPersonalTask.toMap());
+        intent.putExtra("userTask", (Parcelable) userPersonalTask);
+        intent.putExtra("projectId", userPersonalTask.getProjectId());
         startActivity(intent);
     }
 
@@ -97,7 +95,7 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
     }
     public void getAllTask(String userId) {
         DatabaseReference userRef = ref.child("UserTask").child(userId);
-        List<Task> userTaskList = new ArrayList<>();
+        List<PersonalTask> userPersonalTaskList = new ArrayList<>();
 
         userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
 
@@ -141,10 +139,10 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
                             if (!projectId.equals(FragmentListTask.this.projectId))
                                 continue;
 
-                            Task userTask = new Task(id, title, date, time, status, category, description, projectId);
-                            userTaskList.add(userTask);
+                            PersonalTask userPersonalTask = new PersonalTask(id, title, date, time, status, category, description, projectId);
+                            userPersonalTaskList.add(userPersonalTask);
                         }
-                        adapter.setList(userTaskList);
+                        adapter.setList(userPersonalTaskList);
                         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
                         recyclerView.setAdapter(adapter);

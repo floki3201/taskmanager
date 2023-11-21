@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tttn2023.model.Task;
+import com.example.tttn2023.model.PersonalTask;
 
 public class DestinationActivity extends AppCompatActivity {
 
@@ -23,23 +23,23 @@ public class DestinationActivity extends AppCompatActivity {
     private Button btCancelAlarm, btBack;
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    private Task userTaskGet;
+    private PersonalTask userPersonalTaskGet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_destination);
         initViews();
         Intent intent = getIntent();
-        Task userTask = (Task) intent.getParcelableExtra("task");
+        PersonalTask userPersonalTask = (PersonalTask) intent.getParcelableExtra("task");
         intent.removeExtra("task");
 
-        if (userTask == null) {
+        if (userPersonalTask == null) {
             Toast.makeText(this, "Không có dữ liệu", Toast.LENGTH_SHORT).show();
         }
         else {
-            tvTaskTime.setText(userTask.getTime());
-            tvTaskTitle.setText(userTask.getTitle());
-            tvTaskDescription.setText(userTask.getDescription());
+            tvTaskTime.setText(userPersonalTask.getTime());
+            tvTaskTitle.setText(userPersonalTask.getTitle());
+            tvTaskDescription.setText(userPersonalTask.getDescription());
         }
 
 
@@ -88,9 +88,9 @@ public class DestinationActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             // retrieve the User object from the extras of the intent
-            Task user = (Task) intent.getSerializableExtra("task");
+            PersonalTask user = (PersonalTask) intent.getSerializableExtra("task");
 
-            userTaskGet = user;
+            userPersonalTaskGet = user;
             // use the User object as needed
             // ...
         }

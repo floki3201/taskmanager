@@ -1,13 +1,10 @@
 package com.example.tttn2023;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +14,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
+import com.example.tttn2023.model.JointTask;
 import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.timepicker.MaterialTimePicker;
@@ -42,7 +39,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddTaskActivity extends AppCompatActivity implements View.OnClickListener{
+public class AddJointTaskActivity extends AppCompatActivity implements View.OnClickListener {
     public Spinner sp,sp2;
     private EditText eTitle,eTitle2,eDate, eTime;
     private Button btUpdate,btCancel, btSetAlarm;
@@ -56,18 +53,18 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
     private GoogleSignInAccount account;
     private String userId = "";
     private String projectId = "";
-    private PersonalTask userPersonalTaskSet;
+    private JointTask userJointTaskSet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_task_nv);
+        setContentView(R.layout.activity_add_task_ql);
         initView();
 
         btUpdate.setOnClickListener(this);
         btCancel.setOnClickListener(this);
         eDate.setOnClickListener(this);
         eTime.setOnClickListener(this);
-        btSetAlarm.setOnClickListener(this);
+//        btSetAlarm.setOnClickListener(this);
 
 
         Intent intent = getIntent();
@@ -91,24 +88,22 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initView() {
-        sp=findViewById(R.id.spCategory);
         eTitle=findViewById(R.id.tvTitle);
         eTitle2=findViewById(R.id.tvTitle2);
         eDate=findViewById(R.id.tvDate);
         eTime=findViewById(R.id.tvTime);
         btUpdate=findViewById(R.id.btUpdate);
         btCancel=findViewById(R.id.btCancel);
-        btSetAlarm = findViewById(R.id.btSetAlarm);
-
-        btSetAlarm.setEnabled(false);
-        btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
-
+//        btSetAlarm = findViewById(R.id.btSetAlarm);
+//
+//        btSetAlarm.setEnabled(false);
+//        btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
+        sp=findViewById(R.id.spCategory);
         sp2=findViewById(R.id.spCategory2);
         sp.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category)));
         sp2.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category2)));
 
     }
-
     @Override
     public void onClick(View view) {
         if(view==eDate){
@@ -116,7 +111,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             int year= c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
-            DatePickerDialog dialog = new DatePickerDialog(AddTaskActivity.this, new DatePickerDialog.OnDateSetListener() {
+            DatePickerDialog dialog = new DatePickerDialog(AddJointTaskActivity.this, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int y, int m, int d) {
                     String date="";
@@ -145,8 +140,8 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             if (picker == null && eTime.getText().toString().isEmpty()) {
                 return;
             }
-            btSetAlarm.setEnabled(true);
-            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg));
+//            btSetAlarm.setEnabled(true);
+//            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg));
         }
         if(view==btCancel){
             finish();
@@ -159,20 +154,15 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             String status = sp.getSelectedItem().toString();
             String category =sp2.getSelectedItem().toString();
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                PersonalTask userPersonalTask = new PersonalTask(title, date, time, status, category, description, projectId);
-                addTask(userId, userPersonalTask);
-                userPersonalTaskSet = userPersonalTask;
+                JointTask userJointTask = new JointTask(title,description, date, time, status, projectId, category);
+                addJointTask(userId, userJointTask);
+                userJointTaskSet = userJointTask;
                 finish();
             }
         }
-        if(view == btSetAlarm) {
-            setAlarm();
-            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
-            btSetAlarm.setEnabled(false);
-        }
     }
-    public void addTask(String userId, PersonalTask userPersonalTask) {
-        DatabaseReference userRef = ref.child("UserTask").child(userId);
+    public void addJointTask(String userId, JointTask userJointTask) {
+        DatabaseReference userRef = ref.child("UserJointTask").child(userId);
         Query lastQuery = userRef.orderByKey().limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             int lastKey = 0;
@@ -197,8 +187,8 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
                 int newKey = lastKey + 1;
-                PersonalTask newUserPersonalTask = new PersonalTask(String.valueOf(newKey), userPersonalTask.getTitle(), userPersonalTask.getDate(), userPersonalTask.getTime() , userPersonalTask.getStatus(), userPersonalTask.getCategory(), userPersonalTask.getDescription(), userPersonalTask.getProjectId());
-                userRef.child(String.valueOf(newKey)).setValue(newUserPersonalTask);
+                JointTask newUserJointTask = new JointTask(String.valueOf(newKey), userJointTask.getTitle(),userJointTask.getDescription(), userJointTask.getDate(), userJointTask.getTime() , userJointTask.getStatus(), projectId, userJointTask.getEmployeeId());
+                userRef.child(String.valueOf(newKey)).setValue(newUserJointTask);
             }
 
             @Override
@@ -207,7 +197,6 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
-
     private void showTimePicker() {
 
         picker = new MaterialTimePicker.Builder()
@@ -225,7 +214,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
 
                 if (picker.getHour() > 12) {
 
-                   eTime.setText(
+                    eTime.setText(
                             String.format("%02d", (picker.getHour() - 12)) + " : " + String.format("%02d", picker.getMinute()) + " PM"
                     );
 
@@ -244,36 +233,6 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
-    private void cancelAlarm() {
-
-        Intent intent = new Intent(this, AlarmReceiver.class);
-
-        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE);
-
-        if (alarmManager == null) {
-
-            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        }
-
-        alarmManager.cancel(pendingIntent);
-        Toast.makeText(this, "Đã hủy thông báo", Toast.LENGTH_SHORT).show();
-    }
-
-    private void setAlarm() {
-
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        Intent intent = new Intent(this, AlarmReceiver.class);
-//        intent.putExtra("task", (Parcelable) userTask);
-        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent);
-
-        Toast.makeText(this, "Đã đặt thông báo", Toast.LENGTH_SHORT).show();
-    }
-
     private void createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

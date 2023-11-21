@@ -63,6 +63,17 @@
                     android:textColor="@color/text_theme_light"
                     android:textSize="15dp"
                     tools:ignore="TextSizeCheck" />
+                <TextView
+                    android:id="@+id/tvProjectId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:text="ProjectId"
+                    android:textColor="@color/text_theme_light"
+                    android:textSize="15dp"
+                    tools:ignore="TextSizeCheck" />
             </LinearLayout>
 
 

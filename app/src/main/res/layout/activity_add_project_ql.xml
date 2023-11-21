@@ -30,7 +30,7 @@
         android:background="@drawable/button_bg_2">
 
         <EditText
-            android:id="@+id/tvTitle"
+            android:id="@+id/eTitle"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:hint="Tên dự án"
@@ -38,7 +38,7 @@
             android:background="@drawable/edit_text_background"/>
 
         <EditText
-            android:id="@+id/tvTitle2"
+            android:id="@+id/eContent"
             android:layout_width="match_parent"
             android:layout_marginTop="15dp"
             android:layout_height="58dp"

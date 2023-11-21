@@ -1,6 +1,6 @@
 package com.example.tttn2023.dal;
 
-import com.example.tttn2023.model.Task;
+import com.example.tttn2023.model.PersonalTask;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -10,12 +10,12 @@ import java.util.List;
 public class FirebaseHelper {
     private FirebaseDatabase database;
     private DatabaseReference ref;
-    public List<Task> userTaskList;
+    public List<PersonalTask> userPersonalTaskList;
 
     public FirebaseHelper() {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
-        userTaskList = new ArrayList<>();
+        userPersonalTaskList = new ArrayList<>();
     }
 
     public FirebaseDatabase getDatabase() {

@@ -8,8 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.example.tttn2023.model.PerPro;
-
 public class Main0Activity extends AppCompatActivity {
     private CardView jointPro, personalPro;
 
@@ -22,7 +20,7 @@ public class Main0Activity extends AppCompatActivity {
         jointPro.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Main0Activity.this, TaskActivity.class);
+                Intent intent = new Intent(Main0Activity.this, JointProActivity.class);
                 startActivity(intent);
             }
         });

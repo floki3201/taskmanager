@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.LoginActivity;
+import com.example.tttn2023.PerProActivity;
 import com.example.tttn2023.TaskActivity;
 import com.example.tttn2023.UserInfoActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
@@ -129,11 +130,13 @@ public class FragmentInfo extends Fragment  {
     public void onResume() {
         super.onResume();
         ((TaskActivity) getActivity()).hideFab();
+//        ((PerProActivity) getActivity()).hideFab();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         ((TaskActivity) getActivity()).showFab();
+//        ((PerProActivity) getActivity()).hideFab();
     }
 }

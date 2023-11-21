@@ -27,8 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
-import com.example.tttn2023.model.PerPro;
-import com.example.tttn2023.model.Task;
+import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -36,8 +35,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.Serializable;
-import java.sql.SQLOutput;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +43,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
     public Spinner sp,sp2;
     private EditText eTitle,eTitle2,eDate, eTime;
     private Button btUpdate,btBack,btRemove, btSetAlarm;
-    private Task userTask;
+    private PersonalTask userPersonalTask;
     private MaterialTimePicker picker;
     private Calendar calendar;
     private AlarmManager alarmManager;
@@ -69,7 +66,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
         eTime.setOnClickListener(this);
         btSetAlarm.setOnClickListener(this);
         Intent intent = getIntent();
-        userTask= intent.getParcelableExtra("userTask");
+        userPersonalTask = intent.getParcelableExtra("userTask");
         projectId = (String) intent.getSerializableExtra("projectId");
 //        intent.removeExtra("userTask");
 
@@ -92,10 +89,10 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
 //            }
 //        }
 
-        eTitle.setText(userTask.getTitle());
-        eTitle2.setText(userTask.getDescription());
-        eDate.setText(userTask.getDate());
-        eTime.setText(userTask.getTime());
+        eTitle.setText(userPersonalTask.getTitle());
+        eTitle2.setText(userPersonalTask.getDescription());
+        eDate.setText(userPersonalTask.getDate());
+        eTime.setText(userPersonalTask.getTime());
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
         createNotificationChannel();
@@ -110,14 +107,14 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
 
         int p=0;
         for(int i=0; i<sp.getCount();i++){
-            if(sp.getItemAtPosition(i).toString().equalsIgnoreCase(userTask.getDescription())){
+            if(sp.getItemAtPosition(i).toString().equalsIgnoreCase(userPersonalTask.getDescription())){
                 p=i;
                 break;
             }
         }
         int p2=0;
         for(int i=0; i<sp2.getCount();i++){
-            if(sp2.getItemAtPosition(i).toString().equalsIgnoreCase(userTask.getCategory())){
+            if(sp2.getItemAtPosition(i).toString().equalsIgnoreCase(userPersonalTask.getCategory())){
                 p2=i;
                 break;
             }
@@ -199,9 +196,9 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             String time = eTime.getText().toString();
 
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                Task newUserTask = new Task(userTask.getId(),title, date, time, status, category, description, projectId);
-                System.out.println("project ID" + newUserTask.getProjectId());
-                updateTask(userId, newUserTask);
+                PersonalTask newUserPersonalTask = new PersonalTask(userPersonalTask.getId(),title, date, time, status, category, description, projectId);
+                System.out.println("project ID" + newUserPersonalTask.getProjectId());
+                updateTask(userId, newUserPersonalTask);
                 finish();
             }
 
@@ -210,11 +207,11 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             //int id= userTask.getId();
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Thông báo xóa");
-            builder.setMessage("Bạn có chắc muốn xóa "+userTask.getTitle()+" không?");
+            builder.setMessage("Bạn có chắc muốn xóa "+ userPersonalTask.getTitle()+" không?");
             builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    ref.child("UserTask").child(userId).child(userTask.getId()).removeValue();
+                    ref.child("UserTask").child(userId).child(userPersonalTask.getId()).removeValue();
                     finish();
                 }
             });
@@ -233,11 +230,11 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             btSetAlarm.setEnabled(false);
         }
     }
-    public void updateTask(String userId, Task userTask) {
+    public void updateTask(String userId, PersonalTask userPersonalTask) {
         DatabaseReference userRef = ref.child("UserTask").child(userId);
-        Map<String, Object> userTaskValues = userTask.toMap();
+        Map<String, Object> userTaskValues = userPersonalTask.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(userTask.getId(), userTaskValues);
+        childUpdates.put(userPersonalTask.getId(), userTaskValues);
         System.out.println("childUpdates: " + childUpdates);
         userRef.updateChildren(childUpdates);
     }
@@ -267,7 +264,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
                     eTime.setText(picker.getHour() + " : " + picker.getMinute() + " AM");
 
                 }
-                userTask.setTime(eTime.getText().toString());
+                userPersonalTask.setTime(eTime.getText().toString());
 
                 calendar.set(Calendar.HOUR_OF_DAY, picker.getHour());
                 calendar.set(Calendar.MINUTE, picker.getMinute());
@@ -298,7 +295,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
 
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.putExtra("task", (Parcelable) userTask);
+        intent.putExtra("task", (Parcelable) userPersonalTask);
 
         pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE);
 

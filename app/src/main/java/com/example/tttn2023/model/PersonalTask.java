@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Task implements Serializable, Parcelable {
+public class PersonalTask implements Serializable, Parcelable {
     private String id;
     private String projectId;
     private String title;
@@ -22,10 +22,10 @@ public class Task implements Serializable, Parcelable {
     private String description;
     private String alarmSet;
 
-    public Task() {
+    public PersonalTask() {
     }
 
-    public Task(String title, String date, String time, String status, String category, String description, String projectId) {
+    public PersonalTask(String title, String date, String time, String status, String category, String description, String projectId) {
         this.title = title;
         this.date = date;
         this.time = time;
@@ -35,7 +35,7 @@ public class Task implements Serializable, Parcelable {
         this.projectId = projectId;
     }
 
-    public Task(String id, String title, String date, String time, String status, String category, String description, String projectId) {
+    public PersonalTask(String id, String title, String date, String time, String status, String category, String description, String projectId) {
         this.id = id;
         this.title = title;
         this.date = date;
@@ -46,7 +46,7 @@ public class Task implements Serializable, Parcelable {
         this.projectId = projectId;
     }
 
-    protected Task(Parcel in) {
+    protected PersonalTask(Parcel in) {
         id = in.readString();
         title = in.readString();
         date = in.readString();
@@ -58,15 +58,15 @@ public class Task implements Serializable, Parcelable {
         projectId = in.readString();
     }
 
-    public static final Creator<Task> CREATOR = new Creator<Task>() {
+    public static final Creator<PersonalTask> CREATOR = new Creator<PersonalTask>() {
         @Override
-        public Task createFromParcel(Parcel in) {
-            return new Task(in);
+        public PersonalTask createFromParcel(Parcel in) {
+            return new PersonalTask(in);
         }
 
         @Override
-        public Task[] newArray(int size) {
-            return new Task[size];
+        public PersonalTask[] newArray(int size) {
+            return new PersonalTask[size];
         }
     };
 

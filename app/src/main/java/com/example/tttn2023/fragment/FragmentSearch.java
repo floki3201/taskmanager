@@ -20,11 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tttn2023.UpdateDeleteActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
 import com.example.tttn2023.model.FBUser;
-import com.example.tttn2023.model.GGUser;
 import com.example.tttn2023.R;
-import com.example.tttn2023.model.Task;
+import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,13 +31,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemListener, View.OnClickListener{
 
@@ -54,7 +48,7 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
 
     private FirebaseUser user;
     private GoogleSignInAccount account;
-    private List<Task> userTaskList;
+    private List<PersonalTask> userPersonalTaskList;
     private String userId = "";
 
     @Nullable
@@ -68,7 +62,7 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
         super.onViewCreated(view, savedInstanceState);
         initView(view);
         adapter=new RecycleViewAdapter();
-        userTaskList = new ArrayList<>();
+        userPersonalTaskList = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
 
@@ -163,7 +157,6 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
     @Override
     public void onClick(View view) {
         if(view==btSearch){
-
         }
     }
 //    public void getAllTask(String userId) {
@@ -228,17 +221,17 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
 
     public void findTaskByTitle(String userId, String key, String searchType) {
         DatabaseReference userRef = ref.child("UserTask").child(userId);
-        List<Task> userTaskList = new ArrayList<>();
+        List<PersonalTask> userPersonalTaskList = new ArrayList<>();
         Query query = userRef.orderByChild(searchType).startAt(key).endAt(key + "\uf8ff");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userTaskList.clear();
+                userPersonalTaskList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Task userTask = dataSnapshot.getValue(Task.class);
-                    userTaskList.add(userTask);
+                    PersonalTask userPersonalTask = dataSnapshot.getValue(PersonalTask.class);
+                    userPersonalTaskList.add(userPersonalTask);
                 }
-                adapter.setList(userTaskList);
+                adapter.setList(userPersonalTaskList);
                 LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                 recyclerView.setLayoutManager(manager);
                 recyclerView.setAdapter(adapter);
@@ -252,15 +245,10 @@ public class FragmentSearch extends Fragment implements RecycleViewAdapter.ItemL
         });
     }
 
-//    @Override
-//    public void onItemClick(View view, int position) {
-//
-//    }
     public void onItemClick(View view, int position) {
-        //Item item = adapter.getItem(position);
-        Task userTask = adapter.getItem(position);
+        PersonalTask userPersonalTask = adapter.getItem(position);
         Intent intent = new Intent(getActivity(), UpdateDeleteActivity.class);
-        intent.putExtra("userTask", (Serializable) userTask);
+        intent.putExtra("userTask", (Serializable) userPersonalTask);
         startActivity(intent);
     }
 

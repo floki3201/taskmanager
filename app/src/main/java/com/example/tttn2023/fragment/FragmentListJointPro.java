@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,21 +14,28 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tttn2023.JointTaskActivity;
 import com.example.tttn2023.R;
 import com.example.tttn2023.TaskActivity;
+import com.example.tttn2023.adapter.RecycleViewAdapterJointPro;
 import com.example.tttn2023.adapter.RecycleViewAdapterPerPro;
 import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.JointPro;
 import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;   // TypeToken
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,10 +43,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPerPro.ItemListener {
+public class FragmentListJointPro extends Fragment implements RecycleViewAdapterJointPro.ItemListener {
     private RecyclerView recyclerView;
-
-    RecycleViewAdapterPerPro adapter;
+    RecycleViewAdapterJointPro adapter;
+    private SearchView svName;
     private FirebaseDatabase database;
     private FirebaseUser user;
     private GoogleSignInAccount account;
@@ -45,12 +54,13 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
     private String userId = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_list_project,container,false);
+        return inflater.inflate(R.layout.fragmen_list_project,container,false);
     }
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initView(view);
         recyclerView = view.findViewById(R.id.recycleView);
-        adapter = new RecycleViewAdapterPerPro();
+        adapter = new RecycleViewAdapterJointPro();
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
@@ -63,24 +73,76 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
 //            account = GGUser.getCurrent_user();
 //            userId = account.getId();
 //        }
-        getAllPerPro(userId);
+        getAllJointPro(userId);
+
+        svName.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                String searchType = "title";
+                findProByTitle(userId, s, searchType);
+                return true;
+            }
+        });
+    }
+
+    private void initView(View view) {
+        recyclerView=view.findViewById(R.id.recycleView);
+        svName=view.findViewById(R.id.search);
+    }
+    public void findProByTitle(String userId, String key,String searchType ){
+        DatabaseReference userRef = ref.child("UserJointPro");
+        List<JointPro> userJointProList = new ArrayList<>();
+        List<JointPro> userJointProList2 = new ArrayList<>();
+        Query query = userRef.orderByChild(searchType).startAt(key).endAt(key + "\uf8ff");
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userJointProList2.equals(userJointProList);
+                userJointProList.clear();
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    JointPro userJointPro = dataSnapshot.getValue(JointPro.class);
+                    String ownerId = (String) userJointPro.getOwnerId();
+
+                    if (!ownerId.equals(userId))
+                        continue;
+                    userJointProList.add(userJointPro);
+//                    if(searchType == null){
+//                        userJointProList.equals(userJointProList2);
+//                        continue;
+//                    }
+                }
+                adapter.setList(userJointProList);
+                LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
+                recyclerView.setLayoutManager(manager);
+                recyclerView.setAdapter(adapter);
+                adapter.setItemListener(FragmentListJointPro.this);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
     @Override
     public void onItemClick(View view, int position) {
-        PersonalPro perPro = adapter.getItem(position);
-        Intent intent = new Intent(getActivity(), TaskActivity.class);
-        intent.putExtra("userPerPro", (Serializable) perPro);
+        JointPro jointPro = adapter.getItem(position);
+        Intent intent = new Intent(getActivity(), JointTaskActivity.class);
+        intent.putExtra("userJointPro", (Serializable) jointPro);
         startActivity(intent);
     }
-
     @Override
     public void onResume() {
         super.onResume();
-        getAllPerPro(userId);
+//        getAllJointPro(userId);
     }
-    private void getAllPerPro(String userId) {
-        DatabaseReference userRef = ref.child("UserPerPro");
-        List<PersonalPro> userPerProList = new ArrayList<>();
+    private void getAllJointPro(String userId) {
+        DatabaseReference userRef = ref.child("UserJointPro");
+        List<JointPro> userJointProList = new ArrayList<>();
         userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<DataSnapshot> task) {
                 if (task.isSuccessful() && task.getResult().getValue() != null) {
@@ -120,14 +182,14 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
 
                             // Using Gson to convert JSON array as String to List<String>
                             List<String> memberList = gson.fromJson(listMember, new TypeToken<List<String>>() {}.getType());
-                            PersonalPro userPerPro = new PersonalPro(id, title, content, ownerId, memberList);
-                            userPerProList.add(userPerPro);
+                            JointPro userJointPro = new JointPro(id, title, content, ownerId, memberList);
+                            userJointProList.add(userJointPro);
                         }
-                        adapter.setList(userPerProList);
+                        adapter.setList(userJointProList);
                         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
                         recyclerView.setAdapter(adapter);
-                        adapter.setItemListener(FragmentListPerPro.this);
+                        adapter.setItemListener(FragmentListJointPro.this);
 
                     } catch (Exception e) {
                         throw new RuntimeException(e);
@@ -136,9 +198,4 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
             }
         });
     }
-
-//    @Override
-//    public void onItemClick(View view, int position) {
-//
-//    }
 }
