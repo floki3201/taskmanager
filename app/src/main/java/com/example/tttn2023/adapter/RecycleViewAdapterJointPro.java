@@ -49,6 +49,8 @@ public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleView
         JointPro userJointProList = list.get(position);
         holder.title.setText(userJointProList.getTitle());
         holder.content.setText(userJointProList.getContent());
+        holder.projectId.setText(userJointProList.getId());
+
     }
 
     @Override
@@ -64,12 +66,13 @@ public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleView
     }
 
     public class HomeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private TextView title,content;
+        private TextView title,content,projectId;
         private Button btUpdate;
         public HomeViewHolder(@NonNull View view) {
             super(view);
             title = view.findViewById(R.id.tvTitle);
             content = view.findViewById(R.id.tvContent);
+            projectId = view.findViewById(R.id.tvProjectId);
             btUpdate = view.findViewById(R.id.btUpdate);
             view.setOnClickListener(this);
             btUpdate.setOnClickListener(this);
