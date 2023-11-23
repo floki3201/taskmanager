@@ -2,6 +2,7 @@ package com.example.tttn2023.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     private GoogleSignInAccount account;
     private DatabaseReference ref;
     private String userId = "";
+    private List<Map<String, String>> listMember = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragmen_list_project,container,false);
@@ -96,12 +98,10 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     public void findProByTitle(String userId, String key,String searchType ){
         DatabaseReference userRef = ref.child("UserJointPro");
         List<JointPro> userJointProList = new ArrayList<>();
-        List<JointPro> userJointProList2 = new ArrayList<>();
         Query query = userRef.orderByChild(searchType).startAt(key).endAt(key + "\uf8ff");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userJointProList2.equals(userJointProList);
                 userJointProList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     JointPro userJointPro = dataSnapshot.getValue(JointPro.class);
@@ -131,8 +131,11 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     @Override
     public void onItemClick(View view, int position) {
         JointPro jointPro = adapter.getItem(position);
+        listMember = jointPro.getListMember();
         Intent intent = new Intent(getActivity(), JointTaskActivity.class);
-        intent.putExtra("userJointPro", (Serializable) jointPro);
+        intent.putExtra("userJointPro", (Parcelable) jointPro);
+        intent.putExtra("memberList", (Serializable) listMember);
+        System.out.println("userJointPro: " + jointPro.toMap());
         startActivity(intent);
     }
     @Override
@@ -173,16 +176,24 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
                             String content = (String) jsonObject.get("content");
                             String ownerId = (String) jsonObject.get("ownerId");
 
-                            if (!ownerId.equals(userId))
-                                continue;
+//                            if (!ownerId.equals(userId) || )
+//                                continue;
 
                             // Using Gson to convert JSON array to String
                             Gson gson = new Gson();
                             String listMember = jsonObject.get("listMember").toString();
-
+                            System.out.println("listMember" + listMember + " " + listMember.getClass());
                             // Using Gson to convert JSON array as String to List<String>
-                            List<String> memberList = gson.fromJson(listMember, new TypeToken<List<String>>() {}.getType());
+                            List<Map<String, String>> memberList = gson.fromJson(listMember, new TypeToken<List<Map<String, String>>>() {}.getType());
+                            System.out.println("memberList" + memberList + " " + memberList.getClass());
+                            if (!ownerId.equals(userId) && !memberList.contains(new HashMap<String, String>(){{put(userId, FBUser.getCurrent_user().getEmail());}}))
+                                continue;
+                            if(ownerId.equals(userId)){
+                                FBUser.setIsOwner(true);
+                            }
+
                             JointPro userJointPro = new JointPro(id, title, content, ownerId, memberList);
+                            System.out.println("userJointPro" + userJointPro + " " + userJointPro.toMap());
                             userJointProList.add(userJointPro);
                         }
                         adapter.setList(userJointProList);

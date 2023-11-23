@@ -16,7 +16,7 @@ public class JointPro implements Serializable, Parcelable {
     private String title;
     private String content;
     private String ownerId;
-    private List<String> listMember;
+    private List<Map<String, String>> listMember;
     protected JointPro(Parcel in) {
         id = in.readString();
         title = in.readString();
@@ -32,7 +32,8 @@ public class JointPro implements Serializable, Parcelable {
         this.title = title;
         this.content = content;
     }
-    public JointPro(String id, String title, String content, String ownerId, List<String> listMember) {
+
+    public JointPro(String id, String title, String content, String ownerId, List<Map<String, String>> listMember) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -84,11 +85,11 @@ public class JointPro implements Serializable, Parcelable {
         this.ownerId = ownerId;
     }
 
-    public List<String> getListMember() {
+    public List<Map<String, String>> getListMember() {
         return listMember;
     }
 
-    public void setListMember(List<String> listMember) {
+    public void setListMember(List<Map<String, String>> listMember) {
         this.listMember = listMember;
     }
 

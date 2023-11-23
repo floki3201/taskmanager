@@ -5,6 +5,15 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class FBUser {
     public static FirebaseUser current_user;
+    public static Boolean isOwner = false;
+
+    public static Boolean getIsOwner() {
+        return isOwner;
+    }
+
+    public static void setIsOwner(Boolean isOwner) {
+        FBUser.isOwner = isOwner;
+    }
 
     public FBUser() {
     }

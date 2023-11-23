@@ -7,14 +7,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.tttn2023.fragment.FragmentSearch;
 import com.example.tttn2023.model.FBUser;
 import com.example.tttn2023.model.GGUser;
 import com.example.tttn2023.model.JointPro;
 import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,20 +34,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AddJointProActivity extends AppCompatActivity implements View.OnClickListener {
-    private EditText eTitle,eContent;
+public class JoinProjectActivity extends AppCompatActivity implements View.OnClickListener{
+    private EditText eTitle;
     private Button btUpdate,btCancel;
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private String userId = "";
-    private JointPro userJointProSet;
+
+    private String userEmail = "";
+    private boolean check = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_project_ql);
+        setContentView(R.layout.activity_joint_project);
         initView();
         btUpdate.setOnClickListener(this);
         btCancel.setOnClickListener(this);
@@ -53,12 +60,12 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
         if(FBUser.getCurrent_user() != null) {
             user = FBUser.getCurrent_user();
             userId = user.getUid();
+            userEmail = user.getEmail();
         } else {
             account = GGUser.getCurrent_user();
             userId = account.getId();
         }
     }
-
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "Task Manager Reminder Channel";
@@ -72,10 +79,8 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
 
         }
     }
-
     private void initView() {
         eTitle=findViewById(R.id.eTitle);
-        eContent=findViewById(R.id.eContent);
         btUpdate=findViewById(R.id.btUpdate);
         btCancel=findViewById(R.id.btCancel);
     }
@@ -87,50 +92,45 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
         }
         if(view==btUpdate){
             String title =eTitle.getText().toString();
-            String content =eContent.getText().toString();
-
-            if(!title.isEmpty() && !content.isEmpty() ){
-                String newId = ref.push().getKey();
-                JointPro userJointPro = new JointPro(newId, title, content);
-                addJointPro(userId, userJointPro);
-                userJointProSet = userJointPro;
+            if(!title.isEmpty()){
+                boolean done = findProById(userId, title);
                 finish();
+            } else {
+                Toast.makeText(this, "Vui lòng nhập tên dự án", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private void addJointPro(String userId, JointPro userJointPro) {
-        DatabaseReference userRef = ref.child("UserJointPro").child(userJointPro.getId());
-        Query lastQuery = userRef.orderByKey().limitToLast(1);
-        lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            int lastKey = 0;
+    public boolean findProById(String userId, String key) {
+        DatabaseReference userRef = ref.child("UserJointPro");
+        JointPro userJointPro = new JointPro();
+
+        // check if project is exist and add user to project
+
+        Query query = userRef.orderByChild("id").equalTo(key);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
-//                    Object obj = dataSnapshot.getValue();
-//                    try {
-//                        if (obj instanceof HashMap) {
-//                            HashMap<String, Object> hashMap = (HashMap<String, Object>) obj;
-//                            ArrayList<Map.Entry<String, Object>> list = new ArrayList<>(hashMap.entrySet());
-//                            Map.Entry<String, Object> lastEntry = list.get(list.size() - 1);
-//
-//                            lastKey = Integer.parseInt(lastEntry.getKey());
-//                        }
-//                        else {
-//                            ArrayList<Map<String, Object>> list = (ArrayList<Map<String, Object>>) obj;
-//                            lastKey = Integer.parseInt(list.get(list.size() - 1).get("id").toString());
-//                        }
-//                    } catch (Exception e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                }
-//                int newKey = lastKey + 1;
-                List<Map<String, String>> memberList = new ArrayList<>();
-                Map<String, String> map = new HashMap<>();
-                map.put(userId, user.getEmail());
-                memberList.add(map);
-                JointPro newUserPerPro = new JointPro(userJointPro.getId(),userJointPro.getTitle(), userJointPro.getContent(), userId, memberList);
-                userRef.setValue(newUserPerPro);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if(snapshot.getChildren().)
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    JointPro userJointProject = dataSnapshot.getValue(JointPro.class);
+                    if(userJointProject.getId().equalsIgnoreCase(key)){
+                        userJointPro.setId(userJointProject.getId());
+                        userJointPro.setTitle(userJointProject.getTitle());
+                        userJointPro.setContent(userJointProject.getContent());
+                        userJointPro.setOwnerId(userJointProject.getOwnerId());
+
+                        List<Map<String, String>> listMember = userJointProject.getListMember();
+                        Map<String, String> map = new HashMap<>();
+                        map.put(userId, userEmail);
+                        listMember.add(map);
+
+                        userJointPro.setListMember(userJointProject.getListMember());
+                        updatePerPro(userJointProject.getId(), userJointPro);
+
+                        break;
+                    }
+                }
             }
 
             @Override
@@ -138,5 +138,17 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
+        if(userJointPro.getId() != null)
+            return true;
+        return false;
+    }
+
+    private void updatePerPro(String projectId, JointPro newUserPerPro) {
+        DatabaseReference userRef = ref.child("UserJointPro");
+        Map<String, Object> userPerProValues = newUserPerPro.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(projectId, userPerProValues);
+        System.out.println("childUpdates: " + childUpdates);
+        userRef.updateChildren(childUpdates);
     }
 }

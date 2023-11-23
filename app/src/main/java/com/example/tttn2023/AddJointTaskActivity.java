@@ -35,8 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AddJointTaskActivity extends AppCompatActivity implements View.OnClickListener {
@@ -53,19 +55,12 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
     private GoogleSignInAccount account;
     private String userId = "";
     private String projectId = "";
+    private List<Map<String, String>> listMember = new ArrayList<>();
     private JointTask userJointTaskSet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task_ql);
-        initView();
-
-        btUpdate.setOnClickListener(this);
-        btCancel.setOnClickListener(this);
-        eDate.setOnClickListener(this);
-        eTime.setOnClickListener(this);
-//        btSetAlarm.setOnClickListener(this);
-
 
         Intent intent = getIntent();
         if (intent.hasExtra("projectId")) {
@@ -74,6 +69,22 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
                 projectId = (String) serializable;
             }
         }
+        if (intent.hasExtra("memberList")) {
+            Serializable serializable = intent.getSerializableExtra("memberList");
+            if (serializable instanceof List<?>) {
+                listMember = (List<Map<String, String>>) serializable;
+            }
+
+        }
+
+        initView();
+
+        btUpdate.setOnClickListener(this);
+        btCancel.setOnClickListener(this);
+        eDate.setOnClickListener(this);
+        eTime.setOnClickListener(this);
+//        btSetAlarm.setOnClickListener(this);
+
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
         createNotificationChannel();
@@ -94,14 +105,25 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
         eTime=findViewById(R.id.tvTime);
         btUpdate=findViewById(R.id.btUpdate);
         btCancel=findViewById(R.id.btCancel);
-//        btSetAlarm = findViewById(R.id.btSetAlarm);
-//
-//        btSetAlarm.setEnabled(false);
-//        btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
         sp=findViewById(R.id.spCategory);
         sp2=findViewById(R.id.spCategory2);
         sp.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category)));
-        sp2.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category2)));
+        // i want sp2 have value from listMember
+        // Your list of strings
+
+        List<String> members = new ArrayList<>();
+
+        for (Map<String, String> member : listMember) {
+            members.add(member.values().toString());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, members);
+        adapter.setDropDownViewResource(R.layout.item_spinner);
+
+// Set the ArrayAdapter on the Spinner
+        sp2.setAdapter(adapter);
+
+        //sp2.setAdapter(new ArrayAdapter<>(this,R.layout.item_spinner,listMember));
+
 
     }
     @Override
@@ -152,9 +174,9 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
             String date =eDate.getText().toString();
             String time = eTime.getText().toString();
             String status = sp.getSelectedItem().toString();
-            String category =sp2.getSelectedItem().toString();
+            String employeeId =sp2.getSelectedItem().toString();
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                JointTask userJointTask = new JointTask(title,description, date, time, status, projectId, category);
+                JointTask userJointTask = new JointTask(title,description, date, time, status, projectId, employeeId);
                 addJointTask(userId, userJointTask);
                 userJointTaskSet = userJointTask;
                 finish();

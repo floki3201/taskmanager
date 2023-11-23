@@ -2,6 +2,7 @@ package com.example.tttn2023;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -21,6 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class JointTaskActivity extends AppCompatActivity {
     private BottomNavigationView navigationView;
@@ -28,6 +32,7 @@ public class JointTaskActivity extends AppCompatActivity {
     private FloatingActionButton fab, fab_back;
     private TabLayout tabLayout;
     private String projectId = "";
+    private List<Map<String, String>> listMember = new ArrayList<>();
     private FirebaseDatabase database;
     private DatabaseReference ref;
     @Override
@@ -40,15 +45,26 @@ public class JointTaskActivity extends AppCompatActivity {
         // Check if the Intent contains the "userPerPro" extra
         if (intent.hasExtra("userJointPro")) {
             // Retrieve the Serializable object
-            Serializable serializable = intent.getSerializableExtra("userJointPro");
-
+//            Serializable serializable = intent.getSerializableExtra("userJointPro");
+            Parcelable parcelable = intent.getParcelableExtra("userJointPro");
             // Check if the Serializable object is of type PerPro
-            if (serializable instanceof JointPro) {
-                JointPro jointPro = (JointPro) serializable;
+            if (parcelable instanceof JointPro) {
+                JointPro jointPro = (JointPro) parcelable;
                 projectId = jointPro.getId();
+                listMember = jointPro.getListMember();
                 System.out.println("IdProject      :" + projectId);
+//                System.out.println("ListMember     :" + listMember);
+//                System.out.println("JointPro :" + jointPro.toMap());
                 // Do something with perProName
             }
+        }
+        if (intent.hasExtra("memberList")) {
+            Serializable serializable = intent.getSerializableExtra("memberList");
+            if (serializable instanceof List<?>) {
+                listMember = (List<Map<String, String>>) serializable;
+                System.out.println("ListMember     :" + listMember);
+            }
+
         }
 
         navigationView = findViewById(R.id.bottom_nav);
@@ -62,6 +78,7 @@ public class JointTaskActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(JointTaskActivity.this, AddJointTaskActivity.class);
                 intent.putExtra("projectId", projectId);
+                intent.putExtra("memberList", (Serializable) listMember);
                 startActivity(intent);
             }
         });

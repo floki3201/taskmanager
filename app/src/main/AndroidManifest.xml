@@ -66,6 +66,9 @@
             android:name=".AddJointTaskActivity"
             android:exported="false" />
         <activity
+            android:name=".JoinProjectActivity"
+            android:exported="false" />
+        <activity
             android:name=".Main0Activity"
             android:exported="false" />
         <activity android:name=".DestinationActivity" />

@@ -126,17 +126,17 @@ public class FragmentInfo extends Fragment  {
     public void onItemClick(View view, int position) {
 
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((TaskActivity) getActivity()).hideFab();
-//        ((PerProActivity) getActivity()).hideFab();
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        ((TaskActivity) getActivity()).hideFab();
+////        ((PerProActivity) getActivity()).hideFab();
+//    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        ((TaskActivity) getActivity()).showFab();
-//        ((PerProActivity) getActivity()).hideFab();
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        ((TaskActivity) getActivity()).showFab();
+////        ((PerProActivity) getActivity()).hideFab();
+//    }
 }
