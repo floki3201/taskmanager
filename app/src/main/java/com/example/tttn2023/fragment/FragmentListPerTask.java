@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.UpdateDeleteActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.R;
 import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FragmentListTask extends Fragment implements RecycleViewAdapter.ItemListener {
+public class FragmentListPerTask extends Fragment implements RecycleViewAdapter.ItemListener {
     private RecyclerView recyclerView;
 
     RecycleViewAdapter adapter;
@@ -44,7 +44,7 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
     private DatabaseReference ref;
     private String userId = "";
 
-    public FragmentListTask(String projectId) {
+    public FragmentListPerTask(String projectId) {
         this.projectId = projectId;
     }
 
@@ -64,8 +64,8 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
         ref = database.getReference();
 
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         }
 //        else {
@@ -136,7 +136,7 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
                             String category = (String) jsonObject.get("category");
                             String projectId = (String) jsonObject.get("projectId");
 
-                            if (!projectId.equals(FragmentListTask.this.projectId))
+                            if (!projectId.equals(FragmentListPerTask.this.projectId))
                                 continue;
 
                             PersonalTask userPersonalTask = new PersonalTask(id, title, date, time, status, category, description, projectId);
@@ -146,7 +146,7 @@ public class FragmentListTask extends Fragment implements RecycleViewAdapter.Ite
                         LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
                         recyclerView.setLayoutManager(manager);
                         recyclerView.setAdapter(adapter);
-                        adapter.setItemListener(FragmentListTask.this);
+                        adapter.setItemListener(FragmentListPerTask.this);
 
                     } catch (Exception e) {
                         throw new RuntimeException(e);

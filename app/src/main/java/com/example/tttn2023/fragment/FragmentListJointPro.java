@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -17,13 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.JointTaskActivity;
 import com.example.tttn2023.R;
-import com.example.tttn2023.TaskActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapterJointPro;
-import com.example.tttn2023.adapter.RecycleViewAdapterPerPro;
-import com.example.tttn2023.model.FBUser;
-import com.example.tttn2023.model.JointPro;
-import com.example.tttn2023.model.PersonalPro;
-import com.example.tttn2023.model.PersonalTask;
+import com.example.tttn2023.model.User;
+import com.example.tttn2023.model.JointProject;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,6 +48,7 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     private GoogleSignInAccount account;
     private DatabaseReference ref;
     private String userId = "";
+    private String ownerId = "";
     private List<Map<String, String>> listMember = new ArrayList<>();
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,8 +63,8 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         }
 //        else {
@@ -97,23 +93,19 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     }
     public void findProByTitle(String userId, String key,String searchType ){
         DatabaseReference userRef = ref.child("UserJointPro");
-        List<JointPro> userJointProList = new ArrayList<>();
+        List<JointProject> userJointProList = new ArrayList<>();
         Query query = userRef.orderByChild(searchType).startAt(key).endAt(key + "\uf8ff");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userJointProList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    JointPro userJointPro = dataSnapshot.getValue(JointPro.class);
+                    JointProject userJointPro = dataSnapshot.getValue(JointProject.class);
                     String ownerId = (String) userJointPro.getOwnerId();
 
                     if (!ownerId.equals(userId))
                         continue;
                     userJointProList.add(userJointPro);
-//                    if(searchType == null){
-//                        userJointProList.equals(userJointProList2);
-//                        continue;
-//                    }
                 }
                 adapter.setList(userJointProList);
                 LinearLayoutManager manager = new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false);
@@ -130,10 +122,12 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     }
     @Override
     public void onItemClick(View view, int position) {
-        JointPro jointPro = adapter.getItem(position);
+        JointProject jointPro = adapter.getItem(position);
         listMember = jointPro.getListMember();
+        ownerId = jointPro.getOwnerId();
         Intent intent = new Intent(getActivity(), JointTaskActivity.class);
         intent.putExtra("userJointPro", (Parcelable) jointPro);
+        intent.putExtra("ownerId", ownerId);
         intent.putExtra("memberList", (Serializable) listMember);
         System.out.println("userJointPro: " + jointPro.toMap());
         startActivity(intent);
@@ -141,11 +135,11 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
     @Override
     public void onResume() {
         super.onResume();
-//        getAllJointPro(userId);
+        getAllJointPro(userId);
     }
     private void getAllJointPro(String userId) {
         DatabaseReference userRef = ref.child("UserJointPro");
-        List<JointPro> userJointProList = new ArrayList<>();
+        List<JointProject> userJointProList = new ArrayList<>();
         userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<DataSnapshot> task) {
                 if (task.isSuccessful() && task.getResult().getValue() != null) {
@@ -186,13 +180,15 @@ public class FragmentListJointPro extends Fragment implements RecycleViewAdapter
                             // Using Gson to convert JSON array as String to List<String>
                             List<Map<String, String>> memberList = gson.fromJson(listMember, new TypeToken<List<Map<String, String>>>() {}.getType());
                             System.out.println("memberList" + memberList + " " + memberList.getClass());
-                            if (!ownerId.equals(userId) && !memberList.contains(new HashMap<String, String>(){{put(userId, FBUser.getCurrent_user().getEmail());}}))
+                            if (!ownerId.equals(userId) && !memberList.contains(new HashMap<String, String>(){{put(userId, User.getCurrent_user().getEmail());}}))
                                 continue;
-                            if(ownerId.equals(userId)){
-                                FBUser.setIsOwner(true);
+                            String regex = "^admin_tm_\\d+@gmail\\.com$";
+
+                            if(ownerId.equals(userId) && User.getCurrent_user().getEmail().startsWith(regex)){
+                                User.setIsOwner(true);
                             }
 
-                            JointPro userJointPro = new JointPro(id, title, content, ownerId, memberList);
+                            JointProject userJointPro = new JointProject(id, title, content, ownerId, memberList);
                             System.out.println("userJointPro" + userJointPro + " " + userJointPro.toMap());
                             userJointProList.add(userJointPro);
                         }

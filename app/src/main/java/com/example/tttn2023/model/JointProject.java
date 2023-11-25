@@ -10,28 +10,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PersonalPro implements Serializable, Parcelable {
+public class JointProject implements Serializable, Parcelable {
     private String id;
     private String title;
     private String content;
     private String ownerId;
-    private List<String> listMember;
-    protected PersonalPro(Parcel in) {
+    private List<Map<String, String>> listMember;
+    protected JointProject(Parcel in) {
         id = in.readString();
         title = in.readString();
         content = in.readString();
+        ownerId = in.readString();
+//        listMember = in.readArrayList();
     }
+    public JointProject(){
 
-    public PersonalPro() {
     }
-
-    public PersonalPro(String id, String title, String content) {
+    public JointProject(String id, String title, String content){
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
-    public PersonalPro(String id, String title, String content, String ownerId, List<String> listMember) {
+    public JointProject(String id, String title, String content, String ownerId, List<Map<String, String>> listMember) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -39,15 +40,15 @@ public class PersonalPro implements Serializable, Parcelable {
         this.listMember = listMember;
     }
 
-    public static final Creator<PersonalPro> CREATOR = new Creator<PersonalPro>() {
+    public static final Creator<JointProject> CREATOR = new Creator<JointProject>() {
         @Override
-        public PersonalPro createFromParcel(Parcel in) {
-            return new PersonalPro(in);
+        public JointProject createFromParcel(Parcel in) {
+            return new JointProject(in);
         }
 
         @Override
-        public PersonalPro[] newArray(int size) {
-            return new PersonalPro[size];
+        public JointProject[] newArray(int size) {
+            return new JointProject[size];
         }
     };
 
@@ -83,12 +84,22 @@ public class PersonalPro implements Serializable, Parcelable {
         this.ownerId = ownerId;
     }
 
-    public List<String> getListMember() {
+    public List<Map<String, String>> getListMember() {
         return listMember;
     }
 
-    public void setListMember(List<String> listMember) {
+    public void setListMember(List<Map<String, String>> listMember) {
         this.listMember = listMember;
+    }
+
+    public Map<String, Object> toMap(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("title", title);
+        map.put("content", content);
+        map.put("ownerId", ownerId);
+        map.put("listMember", listMember);
+        return map;
     }
 
     @Override
@@ -96,16 +107,6 @@ public class PersonalPro implements Serializable, Parcelable {
         return 0;
     }
 
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-//        map.put("idProject", idProject);
-        map.put("title", title);
-        map.put("content", content);
-        map.put("ownerId", ownerId);
-        map.put("listMember", listMember);
-        return map;
-    }
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(id);

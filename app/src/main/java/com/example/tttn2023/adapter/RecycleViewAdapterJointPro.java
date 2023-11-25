@@ -12,15 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.R;
 import com.example.tttn2023.UpdateDeleteJointProActivity;
-import com.example.tttn2023.UpdateDeletePerProActivity;
-import com.example.tttn2023.model.JointPro;
+import com.example.tttn2023.model.JointProject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleViewAdapterJointPro.HomeViewHolder> {
     @NonNull
-    private List<JointPro> list;
+    private List<JointProject> list;
     private ItemListener itemListener;
     public RecycleViewAdapterJointPro() {list = new ArrayList<>();}
 
@@ -35,7 +34,7 @@ public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleView
     public void setItemListener(RecycleViewAdapterJointPro.ItemListener itemListener) {
         this.itemListener = (RecycleViewAdapterJointPro.ItemListener) itemListener;
     }
-    public void setList(List<JointPro> list){
+    public void setList(List<JointProject> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -46,7 +45,7 @@ public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleView
 
     @Override
     public void onBindViewHolder(@NonNull RecycleViewAdapterJointPro.HomeViewHolder holder, int position) {
-        JointPro userJointProList = list.get(position);
+        JointProject userJointProList = list.get(position);
         holder.title.setText(userJointProList.getTitle());
         holder.content.setText(userJointProList.getContent());
         holder.projectId.setText(userJointProList.getId());
@@ -57,7 +56,7 @@ public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleView
     public int getItemCount() {
         return list.size();
     }
-    public JointPro getItem(int position) {
+    public JointProject getItem(int position) {
         return list.get(position);
     }
 
@@ -87,7 +86,7 @@ public class RecycleViewAdapterJointPro extends RecyclerView.Adapter<RecycleView
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     // Retrieve the clicked item
-                    JointPro clickedItem = list.get(position);
+                    JointProject clickedItem = list.get(position);
                     // Start a new activity with the information of the clicked item
                     Intent intent = new Intent(view.getContext(), UpdateDeleteJointProActivity.class);
                     intent.putExtra("projectId", clickedItem.getId());

@@ -1,33 +1,34 @@
 package com.example.tttn2023;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
+import com.example.tttn2023.model.JointTask;
 import com.example.tttn2023.model.PersonalTask;
+import com.example.tttn2023.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -35,15 +36,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class UpdateDeleteActivity extends AppCompatActivity implements View.OnClickListener{
+public class UpdateDeleteJointTaskActivity extends AppCompatActivity implements View.OnClickListener{
     public Spinner sp,sp2;
     private EditText eTitle,eTitle2,eDate, eTime;
-    private Button btUpdate,btBack,btRemove, btSetAlarm;
-    private PersonalTask userPersonalTask;
+    private TextView tvFile;
+    private Button btUpdate,btBack,btRemove, btFile;
+    private JointTask userJointTask;
     private MaterialTimePicker picker;
     private Calendar calendar;
     private AlarmManager alarmManager;
@@ -54,49 +59,49 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
     private GoogleSignInAccount account;
     private String userId = "";
     private String projectId = "";
+    private String ownerID = "";
+    private String employeeId = "";
+    private List<Map<String, String>> listMember = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_delete);
+        setContentView(R.layout.activity_update_delete_jt);
+        Intent intent = getIntent();
+        userJointTask = intent.getParcelableExtra("userTask");
+        projectId = (String) intent.getSerializableExtra("projectId");
+        ownerID = (String) intent.getSerializableExtra("ownerId");
+        if (intent.hasExtra("listMember")) {
+            Serializable serializable = intent.getSerializableExtra("listMember");
+            if (serializable instanceof List<?>) {
+                listMember = (List<Map<String, String>>) serializable;
+            }
+
+        }
         initView();
         btUpdate.setOnClickListener(this);
         btBack.setOnClickListener(this);
         btRemove.setOnClickListener(this);
         eDate.setOnClickListener(this);
         eTime.setOnClickListener(this);
-        btSetAlarm.setOnClickListener(this);
-        Intent intent = getIntent();
-        userPersonalTask = intent.getParcelableExtra("userTask");
-        projectId = (String) intent.getSerializableExtra("projectId");
-//        intent.removeExtra("userTask");
-
+        btFile.setOnClickListener(this);
         System.out.println(projectId);
-////        Intent intent = getIntent();
-
-//        if (intent.hasExtra("userTask")) {
-//            // Retrieve the Serializable object
-//            Serializable serializable = intent.getSerializableExtra("userTask");
-//
-//            // Check if the Serializable object is of type PerPro
-//            if (serializable instanceof Task) {
-//                // Cast it to PerPro
-//                 userTask = (Task) serializable;
-//
-//                // Now you can use the 'perPro' object as needed
-//                // For example, you can access its properties:
-//                projectId = userTask.getProjectId();
-//                System.out.println(userTask.getProjectId() +userTask.getTitle());
-//            }
-//        }
-
-        eTitle.setText(userPersonalTask.getTitle());
-        eTitle2.setText(userPersonalTask.getDescription());
-        eDate.setText(userPersonalTask.getDate());
-        eTime.setText(userPersonalTask.getTime());
+        System.out.println(userJointTask.toMap());
+        eTitle.setText(userJointTask.getTitle());
+        eTitle2.setText(userJointTask.getDescription());
+        eDate.setText(userJointTask.getDate());
+        eTime.setText(userJointTask.getTime());
+//        tvFile.setText(userJointTask.getLinkFile());
+        if(userJointTask.getLinkFile().isEmpty()){
+            tvFile.setText("Nhân viên chưa gửi file");
+            btFile.setVisibility(View.GONE);
+        }else{
+            tvFile.setText(userJointTask.getLinkFile());
+            btFile.setVisibility(View.VISIBLE);
+        }
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
         createNotificationChannel();
-
         if(User.getCurrent_user() != null) {
             user = User.getCurrent_user();
             userId = user.getUid();
@@ -104,24 +109,24 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             account = GGUser.getCurrent_user();
             userId = account.getId();
         }
-
         int p=0;
         for(int i=0; i<sp.getCount();i++){
-            if(sp.getItemAtPosition(i).toString().equalsIgnoreCase(userPersonalTask.getDescription())){
+            if(sp.getItemAtPosition(i).toString().equalsIgnoreCase(userJointTask.getStatus())){
                 p=i;
                 break;
             }
         }
         int p2=0;
         for(int i=0; i<sp2.getCount();i++){
-            if(sp2.getItemAtPosition(i).toString().equalsIgnoreCase(userPersonalTask.getCategory())){
+            employeeId = sp2.getItemAtPosition(i).toString();
+            if(employeeId.equalsIgnoreCase(userJointTask.getEmployeeId())){
                 p2=i;
                 break;
             }
         }
-
+        sp.setSelection(p);
+        sp2.setSelection(p2);
     }
-
     private void initView() {
         sp=findViewById(R.id.spCategory);
         sp2=findViewById(R.id.spCategory2);
@@ -132,17 +137,18 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
         btUpdate=findViewById(R.id.btUpdate);
         btBack=findViewById(R.id.btBack);
         btRemove=findViewById(R.id.btRemove);
-        btSetAlarm = findViewById(R.id.btSetAlarm);
-
-        btSetAlarm.setEnabled(false);
-        btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
-
+        btFile=findViewById(R.id.btFile);
+        tvFile=findViewById(R.id.tvFile);
         sp.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category)));
-        sp2.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category2)));
+        List<String> members = new ArrayList<>();
+        for (Map<String, String> member : listMember) {
+            members.add(member.values().toString());
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, members);
+        adapter.setDropDownViewResource(R.layout.item_spinner);
+        sp2.setAdapter(adapter);
 
     }
-
-    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     public void onClick(View view) {
         if(view==eDate){
@@ -150,7 +156,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             int year= c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
-            DatePickerDialog dialog = new DatePickerDialog(UpdateDeleteActivity.this, new DatePickerDialog.OnDateSetListener() {
+            DatePickerDialog dialog = new DatePickerDialog(UpdateDeleteJointTaskActivity.this, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker view, int y, int m, int d) {
                     String date="";
@@ -181,8 +187,6 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             if (picker == null || eTime.getText().toString().isEmpty()) {
                 return;
             }
-            btSetAlarm.setEnabled(true);
-            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg));
         }
         if(view==btBack){
             finish();
@@ -192,26 +196,36 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             String description =eTitle2.getText().toString();
             String date = eDate.getText().toString();
             String status =sp.getSelectedItem().toString();
-            String category =sp2.getSelectedItem().toString();
+            String employee =sp2.getSelectedItem().toString();
             String time = eTime.getText().toString();
+            String linkFile = tvFile.getText().toString();
 
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                PersonalTask newUserPersonalTask = new PersonalTask(userPersonalTask.getId(),title, date, time, status, category, description, projectId);
-                System.out.println("project ID" + newUserPersonalTask.getProjectId());
-                updateTask(userId, newUserPersonalTask);
+                JointTask newUserJointTask = new JointTask(userJointTask.getId(),title,description, date, time, status, projectId, employee, linkFile);
+                System.out.println("project ID" + newUserJointTask.getProjectId());
+                updateTask(userId, newUserJointTask);
                 finish();
             }
-
+        }
+        if(view==btFile){
+            if(!tvFile.getText().toString().isEmpty() ){
+                copyToClipboard(tvFile.getText().toString());
+                System.out.println(tvFile.getText().toString());
+                openBrowser(tvFile.getText().toString());
+            }
+            else{
+                Toast.makeText(this, "Chưa có file nào", Toast.LENGTH_SHORT).show();
+            }
         }
         if(view==btRemove){
             //int id= userTask.getId();
             AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
             builder.setTitle("Thông báo xóa");
-            builder.setMessage("Bạn có chắc muốn xóa "+ userPersonalTask.getTitle()+" không?");
+            builder.setMessage("Bạn có chắc muốn xóa "+ userJointTask.getTitle()+" không?");
             builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    ref.child("UserTask").child(userId).child(userPersonalTask.getId()).removeValue();
+                    ref.child("UserJointTask").child(userId).child(userJointTask.getId()).removeValue();
                     finish();
                 }
             });
@@ -224,17 +238,12 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-        if (view == btSetAlarm) {
-            setAlarm();
-            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
-            btSetAlarm.setEnabled(false);
-        }
     }
-    public void updateTask(String userId, PersonalTask userPersonalTask) {
-        DatabaseReference userRef = ref.child("UserTask").child(userId);
-        Map<String, Object> userTaskValues = userPersonalTask.toMap();
+    public void updateTask(String userId, JointTask userJointTask) {
+        DatabaseReference userRef = ref.child("UserJointTask").child(userId);
+        Map<String, Object> userTaskValues = userJointTask.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(userPersonalTask.getId(), userTaskValues);
+        childUpdates.put(userJointTask.getId(), userTaskValues);
         System.out.println("childUpdates: " + childUpdates);
         userRef.updateChildren(childUpdates);
     }
@@ -264,7 +273,7 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
                     eTime.setText(picker.getHour() + " : " + picker.getMinute() + " AM");
 
                 }
-                userPersonalTask.setTime(eTime.getText().toString());
+                userJointTask.setTime(eTime.getText().toString());
 
                 calendar.set(Calendar.HOUR_OF_DAY, picker.getHour());
                 calendar.set(Calendar.MINUTE, picker.getMinute());
@@ -274,38 +283,6 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             }
         });
     }
-    private void cancelAlarm() {
-
-        Intent intent = new Intent(this, AlarmReceiver.class);
-
-        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE);
-
-        if (alarmManager == null) {
-
-            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        }
-
-        alarmManager.cancel(pendingIntent);
-        Toast.makeText(this, "Đã hủy thông báo", Toast.LENGTH_SHORT).show();
-    }
-
-    @SuppressLint("UnspecifiedImmutableFlag")
-    private void setAlarm() {
-
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.putExtra("task", (Parcelable) userPersonalTask);
-
-        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE);
-
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, pendingIntent);
-
-        Toast.makeText(this, "Đã đặt thông báo", Toast.LENGTH_SHORT).show();
-        intent.removeExtra("task");
-    }
-
     private void createNotificationChannel() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -318,6 +295,39 @@ public class UpdateDeleteActivity extends AppCompatActivity implements View.OnCl
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
 
+        }
+
+
+    }
+    private void copyToClipboard(String textToCopy) {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
+        if (clipboard != null) {
+            ClipData clip = ClipData.newPlainText("Copied Text", textToCopy);
+            clipboard.setPrimaryClip(clip);
+
+            Toast.makeText(this, "Text copied to clipboard", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void openBrowser(String url) {
+        try {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
+            // Use createChooser to give the user the option to choose a browser
+            Intent chooser = Intent.createChooser(intent, "Open with");
+
+            // Check if there's an app available to handle the intent
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(chooser);
+            } else {
+                // If no app is found, show a message
+                Toast.makeText(this, "No app found to open the link", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            // Handle exceptions, e.g., malformed URL
+            Toast.makeText(this, "Error opening the link", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 }

@@ -18,10 +18,9 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
 import com.example.tttn2023.model.JointTask;
-import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
@@ -35,7 +34,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +42,7 @@ import java.util.Map;
 public class AddJointTaskActivity extends AppCompatActivity implements View.OnClickListener {
     public Spinner sp,sp2;
     private EditText eTitle,eTitle2,eDate, eTime;
-    private Button btUpdate,btCancel, btSetAlarm;
+    private Button btUpdate,btCancel;
     private MaterialTimePicker picker;
     private Calendar calendar;
     private AlarmManager alarmManager;
@@ -55,6 +53,7 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
     private GoogleSignInAccount account;
     private String userId = "";
     private String projectId = "";
+    private String linkFile = "";
     private List<Map<String, String>> listMember = new ArrayList<>();
     private JointTask userJointTaskSet;
     @Override
@@ -89,8 +88,8 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
         ref = database.getReference();
         createNotificationChannel();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         } else {
             account = GGUser.getCurrent_user();
@@ -108,23 +107,13 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
         sp=findViewById(R.id.spCategory);
         sp2=findViewById(R.id.spCategory2);
         sp.setAdapter(new ArrayAdapter<String>(this,R.layout.item_spinner,getResources().getStringArray(R.array.category)));
-        // i want sp2 have value from listMember
-        // Your list of strings
-
         List<String> members = new ArrayList<>();
-
         for (Map<String, String> member : listMember) {
             members.add(member.values().toString());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.item_spinner, members);
         adapter.setDropDownViewResource(R.layout.item_spinner);
-
-// Set the ArrayAdapter on the Spinner
         sp2.setAdapter(adapter);
-
-        //sp2.setAdapter(new ArrayAdapter<>(this,R.layout.item_spinner,listMember));
-
-
     }
     @Override
     public void onClick(View view) {
@@ -162,8 +151,6 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
             if (picker == null && eTime.getText().toString().isEmpty()) {
                 return;
             }
-//            btSetAlarm.setEnabled(true);
-//            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg));
         }
         if(view==btCancel){
             finish();
@@ -174,9 +161,9 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
             String date =eDate.getText().toString();
             String time = eTime.getText().toString();
             String status = sp.getSelectedItem().toString();
-            String employeeId =sp2.getSelectedItem().toString();
+            String employee =sp2.getSelectedItem().toString();
             if(!title.isEmpty() && !description.isEmpty() && !date.isEmpty()){
-                JointTask userJointTask = new JointTask(title,description, date, time, status, projectId, employeeId);
+                JointTask userJointTask = new JointTask(title,description, date, time, status, projectId, employee, linkFile);
                 addJointTask(userId, userJointTask);
                 userJointTaskSet = userJointTask;
                 finish();
@@ -209,7 +196,7 @@ public class AddJointTaskActivity extends AppCompatActivity implements View.OnCl
                     }
                 }
                 int newKey = lastKey + 1;
-                JointTask newUserJointTask = new JointTask(String.valueOf(newKey), userJointTask.getTitle(),userJointTask.getDescription(), userJointTask.getDate(), userJointTask.getTime() , userJointTask.getStatus(), projectId, userJointTask.getEmployeeId());
+                JointTask newUserJointTask = new JointTask(String.valueOf(newKey), userJointTask.getTitle(),userJointTask.getDescription(), userJointTask.getDate(), userJointTask.getTime() , userJointTask.getStatus(), projectId, userJointTask.getEmployeeId(), userJointTask.getLinkFile());
                 userRef.child(String.valueOf(newKey)).setValue(newUserJointTask);
             }
 

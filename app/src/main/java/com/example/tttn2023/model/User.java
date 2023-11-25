@@ -1,9 +1,8 @@
 package com.example.tttn2023.model;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class FBUser {
+public class User {
     public static FirebaseUser current_user;
     public static Boolean isOwner = false;
 
@@ -12,10 +11,10 @@ public class FBUser {
     }
 
     public static void setIsOwner(Boolean isOwner) {
-        FBUser.isOwner = isOwner;
+        User.isOwner = isOwner;
     }
 
-    public FBUser() {
+    public User() {
     }
 
     public static FirebaseUser getCurrent_user() {
@@ -23,10 +22,10 @@ public class FBUser {
     }
 
     public static void setCurrent_user(FirebaseUser current_user) {
-        FBUser.current_user = current_user;
+        User.current_user = current_user;
     }
 
     public static void signOut() {
-        FBUser.current_user = null;
+        User.current_user = null;
     }
 }

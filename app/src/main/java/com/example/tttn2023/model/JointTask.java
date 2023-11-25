@@ -19,27 +19,38 @@ public class JointTask implements Serializable, Parcelable {
     private String description;
 //    private String alarmSet;
     private String employeeId;
+    private String linkFile;
 
-    public JointTask(String title, String description, String date, String time, String status, String employeeId) {
+//    public JointTask(String title, String description, String date, String time, String status, String employeeId) {
+//        this.title = title;
+//        this.date = date;
+//        this.time = time;
+//        this.status = status;
+//        this.description = description;
+//        this.employeeId = employeeId;
+//    }
 
+    public JointTask(String title, String description, String date, String time, String status,String projectId, String employeeId, String linkFile) {
         this.title = title;
         this.date = date;
         this.time = time;
         this.status = status;
         this.description = description;
-        this.employeeId = employeeId;
-    }
-    public JointTask(String title, String description, String date, String time, String status, String projectId, String employeeId) {
         this.projectId = projectId;
-        this.title = title;
-        this.date = date;
-        this.time = time;
-        this.status = status;
-        this.description = description;
         this.employeeId = employeeId;
+        this.linkFile = linkFile;
     }
+//    public JointTask(String title, String description, String date, String time, String status, String projectId, String employeeId) {
+//        this.projectId = projectId;
+//        this.title = title;
+//        this.date = date;
+//        this.time = time;
+//        this.status = status;
+//        this.description = description;
+//        this.employeeId = employeeId;
+//    }
 
-    public JointTask(String id, String title, String description, String date, String time, String status,String projectId, String employeeId) {
+    public JointTask(String id, String title, String description, String date, String time, String status,String projectId, String employeeId, String linkFile) {
         this.id = id;
         this.projectId = projectId;
         this.title = title;
@@ -48,6 +59,7 @@ public class JointTask implements Serializable, Parcelable {
         this.status = status;
         this.description = description;
         this.employeeId = employeeId;
+        this.linkFile = linkFile;
     }
     protected JointTask(Parcel in) {
         id = in.readString();
@@ -56,10 +68,9 @@ public class JointTask implements Serializable, Parcelable {
         date = in.readString();
         time = in.readString();
         status = in.readString();
-
-//        alarmSet = in.readString();
         projectId = in.readString();
         employeeId = in.readString();
+        linkFile = in.readString();
     }
 
     public String getId() {
@@ -118,7 +129,14 @@ public class JointTask implements Serializable, Parcelable {
         this.description = description;
     }
 
-//    public String getAlarmSet() {
+    public String getLinkFile() {
+        return linkFile;
+    }
+
+    public void setLinkFile(String linkFile) {
+        this.linkFile = linkFile;
+    }
+    //    public String getAlarmSet() {
 //        return alarmSet;
 //    }
 //
@@ -155,6 +173,8 @@ public class JointTask implements Serializable, Parcelable {
         map.put("status", status);
         map.put("projectId", projectId);
         map.put("employeeId", employeeId);
+        map.put("linkFile", linkFile);
+//        map.put("alarmSet", alarmSet);
         return map;
     }
     @Override
@@ -171,7 +191,7 @@ public class JointTask implements Serializable, Parcelable {
         parcel.writeString(time);
         parcel.writeString(status);
         parcel.writeString(projectId);
-//        parcel.writeString(alarmSet);
         parcel.writeString(employeeId);
+        parcel.writeString(linkFile);
     }
 }

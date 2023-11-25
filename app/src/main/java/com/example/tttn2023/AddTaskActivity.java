@@ -22,7 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
 import com.example.tttn2023.model.PersonalTask;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -81,8 +81,8 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
         ref = database.getReference();
         createNotificationChannel();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         } else {
             account = GGUser.getCurrent_user();
@@ -165,11 +165,6 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         }
-        if(view == btSetAlarm) {
-            setAlarm();
-            btSetAlarm.setBackground(getResources().getDrawable(R.drawable.button_bg_4));
-            btSetAlarm.setEnabled(false);
-        }
     }
     public void addTask(String userId, PersonalTask userPersonalTask) {
         DatabaseReference userRef = ref.child("UserTask").child(userId);
@@ -244,21 +239,7 @@ public class AddTaskActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
-    private void cancelAlarm() {
 
-        Intent intent = new Intent(this, AlarmReceiver.class);
-
-        pendingIntent = PendingIntent.getBroadcast(this, 0, intent, FLAG_IMMUTABLE);
-
-        if (alarmManager == null) {
-
-            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        }
-
-        alarmManager.cancel(pendingIntent);
-        Toast.makeText(this, "Đã hủy thông báo", Toast.LENGTH_SHORT).show();
-    }
 
     private void setAlarm() {
 

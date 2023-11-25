@@ -12,8 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tttn2023.databinding.ActivityMainBinding;
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -65,9 +64,11 @@ public class LoginByEmailActivity extends AppCompatActivity {
     }
 
     private void login() {
+
         String emailStr = email.getText().toString();
         String passwordStr = password.getText().toString();
-
+        // check if emailStr start with "admin" or not
+        // if emailStr
         if(TextUtils.isEmpty(emailStr)) {
             Toast.makeText(this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
             return;
@@ -84,7 +85,12 @@ public class LoginByEmailActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             Toast.makeText(LoginByEmailActivity.this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(LoginByEmailActivity.this, Main0Activity.class);
-                            FBUser.setCurrent_user(mAuth.getCurrentUser());
+                            User.setCurrent_user(mAuth.getCurrentUser());
+                            String regex = "^admin_tm_\\d+@gmail\\.com$";
+                            if(emailStr.matches(regex))
+                                User.setIsOwner(true);
+                            else
+                                User.setIsOwner(false);
                             startActivity(intent);
                         }
                         else {

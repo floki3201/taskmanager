@@ -1,6 +1,5 @@
 package com.example.tttn2023.model;
 
-import android.graphics.Paint;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,29 +10,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JointPro implements Serializable, Parcelable {
+public class PersonalProject implements Serializable, Parcelable {
     private String id;
     private String title;
     private String content;
     private String ownerId;
-    private List<Map<String, String>> listMember;
-    protected JointPro(Parcel in) {
+    private List<String> listMember;
+    protected PersonalProject(Parcel in) {
         id = in.readString();
         title = in.readString();
         content = in.readString();
-        ownerId = in.readString();
-//        listMember = in.readArrayList();
     }
-    public JointPro(){
 
+    public PersonalProject() {
     }
-    public JointPro(String id, String title, String content){
+
+    public PersonalProject(String id, String title, String content) {
         this.id = id;
         this.title = title;
         this.content = content;
     }
 
-    public JointPro(String id, String title, String content, String ownerId, List<Map<String, String>> listMember) {
+    public PersonalProject(String id, String title, String content, String ownerId, List<String> listMember) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -41,15 +39,15 @@ public class JointPro implements Serializable, Parcelable {
         this.listMember = listMember;
     }
 
-    public static final Creator<JointPro> CREATOR = new Creator<JointPro>() {
+    public static final Creator<PersonalProject> CREATOR = new Creator<PersonalProject>() {
         @Override
-        public JointPro createFromParcel(Parcel in) {
-            return new JointPro(in);
+        public PersonalProject createFromParcel(Parcel in) {
+            return new PersonalProject(in);
         }
 
         @Override
-        public JointPro[] newArray(int size) {
-            return new JointPro[size];
+        public PersonalProject[] newArray(int size) {
+            return new PersonalProject[size];
         }
     };
 
@@ -85,22 +83,12 @@ public class JointPro implements Serializable, Parcelable {
         this.ownerId = ownerId;
     }
 
-    public List<Map<String, String>> getListMember() {
+    public List<String> getListMember() {
         return listMember;
     }
 
-    public void setListMember(List<Map<String, String>> listMember) {
+    public void setListMember(List<String> listMember) {
         this.listMember = listMember;
-    }
-
-    public Map<String, Object> toMap(){
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-        map.put("title", title);
-        map.put("content", content);
-        map.put("ownerId", ownerId);
-        map.put("listMember", listMember);
-        return map;
     }
 
     @Override
@@ -108,6 +96,16 @@ public class JointPro implements Serializable, Parcelable {
         return 0;
     }
 
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+//        map.put("idProject", idProject);
+        map.put("title", title);
+        map.put("content", content);
+        map.put("ownerId", ownerId);
+        map.put("listMember", listMember);
+        return map;
+    }
     @Override
     public void writeToParcel(@NonNull Parcel parcel, int i) {
         parcel.writeString(id);

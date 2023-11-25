@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         if(mAuth != null && user != null){
             Intent intent = new Intent(LoginActivity.this, Main0Activity.class);
-            FBUser.setCurrent_user(mAuth.getCurrentUser());
+            User.setCurrent_user(mAuth.getCurrentUser());
             startActivity(intent);
         }
         else {

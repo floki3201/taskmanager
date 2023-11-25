@@ -59,8 +59,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String email = ed_username.getText().toString().trim();
         String password = ed_password.getText().toString().trim();
 
-
-
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -78,6 +76,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void validate() {
+        String regex = "^admin_tm_\\d+@gmail\\.com$";
         String email = ed_username.getText().toString().trim();
         String password = ed_password.getText().toString().trim();
         String re_password = ed_re_password.getText().toString().trim();
@@ -104,6 +103,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if(password.equals(re_password) == false){
             ed_re_password.setError("Password does not match");
             ed_re_password.requestFocus();
+            return;
+        }
+        if(email.matches(regex) == true){
+            ed_username.setError("Vui lòng đăng ký email không chứa 'admin_tm_...@gmail.com'");
+            ed_username.requestFocus();
             return;
         }
         checkBeforeRegister();

@@ -57,6 +57,12 @@
             android:name=".UpdateDeleteJointProActivity"
             android:exported="false" />
         <activity
+            android:name=".UpdateDeleteJointTaskActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewJointTaskActivity"
+            android:exported="false" />
+        <activity
             android:name=".JointTaskActivity"
             android:exported="false" />
         <activity

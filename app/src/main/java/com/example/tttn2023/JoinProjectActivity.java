@@ -11,15 +11,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.tttn2023.fragment.FragmentSearch;
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
-import com.example.tttn2023.model.JointPro;
-import com.example.tttn2023.model.PersonalPro;
-import com.example.tttn2023.model.PersonalTask;
+import com.example.tttn2023.model.JointProject;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +51,8 @@ public class JoinProjectActivity extends AppCompatActivity implements View.OnCli
         ref = database.getReference();
         createNotificationChannel();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
             userEmail = user.getEmail();
         } else {
@@ -103,7 +97,7 @@ public class JoinProjectActivity extends AppCompatActivity implements View.OnCli
 
     public boolean findProById(String userId, String key) {
         DatabaseReference userRef = ref.child("UserJointPro");
-        JointPro userJointPro = new JointPro();
+        JointProject userJointPro = new JointProject();
 
         // check if project is exist and add user to project
 
@@ -113,7 +107,7 @@ public class JoinProjectActivity extends AppCompatActivity implements View.OnCli
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 //                if(snapshot.getChildren().)
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    JointPro userJointProject = dataSnapshot.getValue(JointPro.class);
+                    JointProject userJointProject = dataSnapshot.getValue(JointProject.class);
                     if(userJointProject.getId().equalsIgnoreCase(key)){
                         userJointPro.setId(userJointProject.getId());
                         userJointPro.setTitle(userJointProject.getTitle());
@@ -143,7 +137,7 @@ public class JoinProjectActivity extends AppCompatActivity implements View.OnCli
         return false;
     }
 
-    private void updatePerPro(String projectId, JointPro newUserPerPro) {
+    private void updatePerPro(String projectId, JointProject newUserPerPro) {
         DatabaseReference userRef = ref.child("UserJointPro");
         Map<String, Object> userPerProValues = newUserPerPro.toMap();
         Map<String, Object> childUpdates = new HashMap<>();

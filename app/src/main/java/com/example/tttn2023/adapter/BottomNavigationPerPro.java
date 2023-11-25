@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.tttn2023.fragment.FragmentInfo;
 import com.example.tttn2023.fragment.FragmentListPerPro;
-import com.example.tttn2023.fragment.FragmentListTask;
 import com.example.tttn2023.fragment.FragmentSearch;
 
 public class BottomNavigationPerPro extends FragmentPagerAdapter {

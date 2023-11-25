@@ -11,9 +11,9 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.PersonalProject;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +35,7 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private String userId = "";
-    private PersonalPro userPerProSet;
+    private PersonalProject userPerProSet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,8 +47,8 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
         ref = database.getReference();
         createNotificationChannel();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         } else {
             account = GGUser.getCurrent_user();
@@ -76,7 +76,7 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
 
             if(!title.isEmpty() && !content.isEmpty() ){
                 String newId = ref.push().getKey();
-                PersonalPro userPerPro = new PersonalPro(newId, title, content);
+                PersonalProject userPerPro = new PersonalProject(newId, title, content);
                 addPerPro(userId, userPerPro);
                 userPerProSet = userPerPro;
                 finish();
@@ -84,7 +84,7 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
         }
 
     }
-    public void addPerPro(String userId, PersonalPro userPerPro) {
+    public void addPerPro(String userId, PersonalProject userPerPro) {
         DatabaseReference userRef = ref.child("UserPerPro").child(userPerPro.getId());
         Query lastQuery = userRef.orderByKey().limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -112,7 +112,7 @@ public class AddPerProActivity extends AppCompatActivity implements View.OnClick
 //                int newKey = lastKey + 1;
                 List<String> memberList = new ArrayList<>();
                 memberList.add(userId);
-                PersonalPro newUserPerPro = new PersonalPro(userPerPro.getId(),userPerPro.getTitle(), userPerPro.getContent(), userId, memberList);
+                PersonalProject newUserPerPro = new PersonalProject(userPerPro.getId(),userPerPro.getTitle(), userPerPro.getContent(), userId, memberList);
                 userRef.setValue(newUserPerPro);
             }
 

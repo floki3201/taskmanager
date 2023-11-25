@@ -19,12 +19,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.LoginActivity;
-import com.example.tttn2023.PerProActivity;
-import com.example.tttn2023.TaskActivity;
 import com.example.tttn2023.UserInfoActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapter;
 import com.example.tttn2023.R;
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -61,7 +59,7 @@ public class FragmentInfo extends Fragment  {
         tvName = view.findViewById(R.id.tvName);
         tvDes = view.findViewById(R.id.tvDes);
         img= view.findViewById(R.id.img);
-        user = FBUser.getCurrent_user();
+        user = User.getCurrent_user();
         account = GGUser.getCurrent_user();
         mAuth = FirebaseAuth.getInstance();
 
@@ -81,11 +79,13 @@ public class FragmentInfo extends Fragment  {
             userEmail = user.getEmail();
             userName = user.getDisplayName();
             Picasso.get().load(user.getPhotoUrl()).into(img);
+            System.out.println("user.getPhotoUrl(): " + user.getPhotoUrl());
         }
         else {
             userEmail = account.getEmail();
             userName = account.getDisplayName();
             Picasso.get().load(account.getPhotoUrl()).into(img);
+            System.out.println("user.getPhotoUrl(): " + user.getPhotoUrl());
         }
         tvName.setText(userName);
         tvDes.setText(userEmail);
@@ -111,7 +111,7 @@ public class FragmentInfo extends Fragment  {
         builder.setMessage("Bạn chắc chắn muốn đăng xuất?")
                 .setPositiveButton("Đăng xuất", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        FBUser.signOut();
+                        User.signOut();
                         GGUser.signOut();
                         mAuth.signOut();
                         googleSignInClient.signOut();

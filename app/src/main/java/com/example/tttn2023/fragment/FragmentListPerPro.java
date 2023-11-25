@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.tttn2023.R;
 import com.example.tttn2023.TaskActivity;
 import com.example.tttn2023.adapter.RecycleViewAdapterPerPro;
-import com.example.tttn2023.model.FBUser;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.User;
+import com.example.tttn2023.model.PersonalProject;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,8 +55,8 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         }
 //        else {
@@ -67,7 +67,7 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
     }
     @Override
     public void onItemClick(View view, int position) {
-        PersonalPro perPro = adapter.getItem(position);
+        PersonalProject perPro = adapter.getItem(position);
         Intent intent = new Intent(getActivity(), TaskActivity.class);
         intent.putExtra("userPerPro", (Serializable) perPro);
         startActivity(intent);
@@ -80,7 +80,7 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
     }
     private void getAllPerPro(String userId) {
         DatabaseReference userRef = ref.child("UserPerPro");
-        List<PersonalPro> userPerProList = new ArrayList<>();
+        List<PersonalProject> userPerProList = new ArrayList<>();
         userRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<DataSnapshot> task) {
                 if (task.isSuccessful() && task.getResult().getValue() != null) {
@@ -120,7 +120,7 @@ public class FragmentListPerPro extends Fragment implements RecycleViewAdapterPe
 
                             // Using Gson to convert JSON array as String to List<String>
                             List<String> memberList = gson.fromJson(listMember, new TypeToken<List<String>>() {}.getType());
-                            PersonalPro userPerPro = new PersonalPro(id, title, content, ownerId, memberList);
+                            PersonalProject userPerPro = new PersonalProject(id, title, content, ownerId, memberList);
                             userPerProList.add(userPerPro);
                         }
                         adapter.setList(userPerProList);

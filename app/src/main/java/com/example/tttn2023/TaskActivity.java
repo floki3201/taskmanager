@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tttn2023.adapter.BottomNavigationPerTask;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.PersonalProject;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -45,9 +45,9 @@ public class TaskActivity extends AppCompatActivity {
             Serializable serializable = intent.getSerializableExtra("userPerPro");
 
             // Check if the Serializable object is of type PerPro
-            if (serializable instanceof PersonalPro) {
+            if (serializable instanceof PersonalProject) {
                 // Cast it to PerPro
-                PersonalPro perPro = (PersonalPro) serializable;
+                PersonalProject perPro = (PersonalProject) serializable;
 
                 // Now you can use the 'perPro' object as needed
                 // For example, you can access its properties:

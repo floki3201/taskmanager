@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,9 +13,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tttn2023.adapter.BottomNavigationJointTask;
-import com.example.tttn2023.adapter.BottomNavigationPerTask;
-import com.example.tttn2023.model.JointPro;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.JointProject;
+import com.example.tttn2023.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -33,6 +33,7 @@ public class JointTaskActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private String projectId = "";
     private List<Map<String, String>> listMember = new ArrayList<>();
+    private String ownerId = "";
     private FirebaseDatabase database;
     private DatabaseReference ref;
     @Override
@@ -42,29 +43,28 @@ public class JointTaskActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        // Check if the Intent contains the "userPerPro" extra
         if (intent.hasExtra("userJointPro")) {
-            // Retrieve the Serializable object
-//            Serializable serializable = intent.getSerializableExtra("userJointPro");
+
             Parcelable parcelable = intent.getParcelableExtra("userJointPro");
-            // Check if the Serializable object is of type PerPro
-            if (parcelable instanceof JointPro) {
-                JointPro jointPro = (JointPro) parcelable;
+            if (parcelable instanceof JointProject) {
+                JointProject jointPro = (JointProject) parcelable;
                 projectId = jointPro.getId();
+                ownerId = jointPro.getOwnerId();
                 listMember = jointPro.getListMember();
-                System.out.println("IdProject      :" + projectId);
-//                System.out.println("ListMember     :" + listMember);
-//                System.out.println("JointPro :" + jointPro.toMap());
-                // Do something with perProName
             }
         }
         if (intent.hasExtra("memberList")) {
             Serializable serializable = intent.getSerializableExtra("memberList");
             if (serializable instanceof List<?>) {
                 listMember = (List<Map<String, String>>) serializable;
-                System.out.println("ListMember     :" + listMember);
             }
 
+        }
+        if (intent.hasExtra("ownerId")) {
+            Serializable serializable = intent.getSerializableExtra("ownerId");
+            if (serializable instanceof String) {
+                ownerId = (String) serializable;
+            }
         }
 
         navigationView = findViewById(R.id.bottom_nav);
@@ -76,10 +76,14 @@ public class JointTaskActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(JointTaskActivity.this, AddJointTaskActivity.class);
-                intent.putExtra("projectId", projectId);
-                intent.putExtra("memberList", (Serializable) listMember);
-                startActivity(intent);
+                if(ownerId.equals(User.getCurrent_user().getUid())) {
+                    Intent intent = new Intent(JointTaskActivity.this, AddJointTaskActivity.class);
+                    intent.putExtra("projectId", projectId);
+                    intent.putExtra("memberList", (Serializable) listMember);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(JointTaskActivity.this, "Bạn không có quyền thêm công việc", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         fab_back.setOnClickListener(new View.OnClickListener() {
@@ -89,7 +93,7 @@ public class JointTaskActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        BottomNavigationJointTask adapter = new BottomNavigationJointTask(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, projectId);
+        BottomNavigationJointTask adapter = new BottomNavigationJointTask(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT, projectId, ownerId, listMember);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

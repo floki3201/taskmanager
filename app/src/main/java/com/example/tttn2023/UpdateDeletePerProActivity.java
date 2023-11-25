@@ -10,8 +10,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tttn2023.model.FBUser;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.User;
+import com.example.tttn2023.model.PersonalProject;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -32,7 +32,7 @@ public class UpdateDeletePerProActivity extends AppCompatActivity implements Vie
     private String userId = "";
     private String projectId = "";
     private String title, content, ownerId;
-    private PersonalPro perPro;
+    private PersonalProject perPro;
     private List<String> memberList;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +60,8 @@ public class UpdateDeletePerProActivity extends AppCompatActivity implements Vie
         ref = database.getReference();
         createNotificationChannel();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         }
 //        else {
@@ -92,7 +92,7 @@ public class UpdateDeletePerProActivity extends AppCompatActivity implements Vie
             String title =eTitle.getText().toString();
             String content =eTitle2.getText().toString();
             if(!title.isEmpty() && !content.isEmpty()){
-                PersonalPro newUserPerPro = new PersonalPro(projectId,title, content,ownerId,memberList);
+                PersonalProject newUserPerPro = new PersonalProject(projectId,title, content,ownerId,memberList);
 //                System.out.println("project ID" + newUserPerPro.getProjectId());
                 updatePerPro(projectId, newUserPerPro);
                 finish();
@@ -122,7 +122,7 @@ public class UpdateDeletePerProActivity extends AppCompatActivity implements Vie
         }
     }
 
-    private void updatePerPro(String projectId, PersonalPro newUserPerPro) {
+    private void updatePerPro(String projectId, PersonalProject newUserPerPro) {
         DatabaseReference userRef = ref.child("UserPerPro");
         Map<String, Object> userPerProValues = newUserPerPro.toMap();
         Map<String, Object> childUpdates = new HashMap<>();

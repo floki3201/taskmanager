@@ -3,6 +3,7 @@ package com.example.tttn2023;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,14 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
@@ -33,6 +31,7 @@ import com.squareup.picasso.Picasso;
 
 public class UserInfoActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private static final int PICK_FILE_REQUEST = 1;
     private TextView tvName,tvDes;
     private EditText edUserEmail, edUserDisplayName, edUserPassword, edUserPhoto;
     private ImageView img;
@@ -42,6 +41,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
     private FirebaseDatabase database;
     private DatabaseReference ref;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +54,8 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         database = FirebaseDatabase.getInstance();
         ref = database.getReference();
 
-        if (FBUser.getCurrent_user() != null){
-            user = FBUser.getCurrent_user();
+        if (User.getCurrent_user() != null){
+            user = User.getCurrent_user();
         }
         else {
             account = GGUser.getCurrent_user();
@@ -161,8 +161,9 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             // Get the URI of the selected photo
             Uri uri = data.getData();
+            showLoadingDialog();
 
-            edUserPhoto.setText(uri.toString());
+            //edUserPhoto.setText(uri.toString());
 
             // Upload the photo to Firebase Storage
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -173,6 +174,7 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 if (!task.isSuccessful()) {
                     throw task.getException();
                 }
+                // how to show loading screen here? help me copilot :(
 
                 // Get the download URL for the uploaded file
                 return imageRef.getDownloadUrl();
@@ -182,7 +184,8 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
 
-                    Log.d("TAG", "Upload photo successfully: " + downloadUri);
+                    Log.d("TAG", "Upload photo 0: " + downloadUri);
+                    dismissLoadingDialog();
                     edUserPhoto.setText(downloadUri.toString());
                 } else {
                     Log.w("TAG", "Upload photo failed.", task.getException());
@@ -190,6 +193,18 @@ public class UserInfoActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        }
+    }
+    private void showLoadingDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false); // Set to false if you want to force the user to wait until the loading is complete
+        progressDialog.show();
+    }
+
+    private void dismissLoadingDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
     }
 }

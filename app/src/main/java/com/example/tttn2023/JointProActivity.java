@@ -15,9 +15,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tttn2023.adapter.BottomNavigationJointPro;
-import com.example.tttn2023.adapter.BottomNavigationPerPro;
-import com.example.tttn2023.adapter.BottomNavigationPerTask;
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -44,7 +42,7 @@ public class JointProActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(FBUser.getIsOwner()) {
+                if(User.getIsOwner()) {
                     Intent intent = new Intent(JointProActivity.this, AddJointProActivity.class);
                     startActivity(intent);
                 }

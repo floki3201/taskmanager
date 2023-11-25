@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.tttn2023.fragment.FragmentInfo;
-import com.example.tttn2023.fragment.FragmentListTask;
+import com.example.tttn2023.fragment.FragmentListPerTask;
 import com.example.tttn2023.fragment.FragmentSearch;
 
 public class BottomNavigationPerTask extends FragmentPagerAdapter {
@@ -21,7 +21,7 @@ public class BottomNavigationPerTask extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position){
-            case 0:return new FragmentListTask(projectId);
+            case 0:return new FragmentListPerTask(projectId);
             case 1:return new FragmentSearch();
             case 2:return new FragmentInfo();
         }

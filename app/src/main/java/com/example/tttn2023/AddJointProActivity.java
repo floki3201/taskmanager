@@ -11,10 +11,9 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.tttn2023.model.FBUser;
+import com.example.tttn2023.model.User;
 import com.example.tttn2023.model.GGUser;
-import com.example.tttn2023.model.JointPro;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.JointProject;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +36,7 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
     private FirebaseUser user;
     private GoogleSignInAccount account;
     private String userId = "";
-    private JointPro userJointProSet;
+    private JointProject userJointProSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +49,8 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
         ref = database.getReference();
         createNotificationChannel();
 
-        if(FBUser.getCurrent_user() != null) {
-            user = FBUser.getCurrent_user();
+        if(User.getCurrent_user() != null) {
+            user = User.getCurrent_user();
             userId = user.getUid();
         } else {
             account = GGUser.getCurrent_user();
@@ -91,7 +90,7 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
 
             if(!title.isEmpty() && !content.isEmpty() ){
                 String newId = ref.push().getKey();
-                JointPro userJointPro = new JointPro(newId, title, content);
+                JointProject userJointPro = new JointProject(newId, title, content);
                 addJointPro(userId, userJointPro);
                 userJointProSet = userJointPro;
                 finish();
@@ -99,7 +98,7 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void addJointPro(String userId, JointPro userJointPro) {
+    private void addJointPro(String userId, JointProject userJointPro) {
         DatabaseReference userRef = ref.child("UserJointPro").child(userJointPro.getId());
         Query lastQuery = userRef.orderByKey().limitToLast(1);
         lastQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -129,7 +128,7 @@ public class AddJointProActivity extends AppCompatActivity implements View.OnCli
                 Map<String, String> map = new HashMap<>();
                 map.put(userId, user.getEmail());
                 memberList.add(map);
-                JointPro newUserPerPro = new JointPro(userJointPro.getId(),userJointPro.getTitle(), userJointPro.getContent(), userId, memberList);
+                JointProject newUserPerPro = new JointProject(userJointPro.getId(),userJointPro.getTitle(), userJointPro.getContent(), userId, memberList);
                 userRef.setValue(newUserPerPro);
             }
 

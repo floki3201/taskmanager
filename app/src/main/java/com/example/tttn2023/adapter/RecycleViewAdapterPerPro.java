@@ -12,21 +12,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.tttn2023.R;
 import com.example.tttn2023.UpdateDeletePerProActivity;
-import com.example.tttn2023.model.PersonalPro;
+import com.example.tttn2023.model.PersonalProject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAdapterPerPro.HomeViewHolder>{
     @NonNull
-    private List<PersonalPro> list;
+    private List<PersonalProject> list;
     private ItemListener itemListener;
     public RecycleViewAdapterPerPro() {list = new ArrayList<>();};
 
     public void setItemListener(ItemListener itemListener) {
         this.itemListener = (ItemListener) itemListener;
     }
-    public void setList(List<PersonalPro> list){
+    public void setList(List<PersonalProject> list){
         this.list = list;
         notifyDataSetChanged();
     }
@@ -39,7 +39,7 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
 
     @Override
     public void onBindViewHolder(@NonNull HomeViewHolder holder, int position) {
-        PersonalPro userPerProList = list.get(position);
+        PersonalProject userPerProList = list.get(position);
         holder.title.setText(userPerProList.getTitle());
         holder.content.setText(userPerProList.getContent());
         holder.projectId.setText(userPerProList.getId());
@@ -50,7 +50,7 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
         return list.size();
     }
 
-    public PersonalPro getItem(int position) {
+    public PersonalProject getItem(int position) {
         return list.get(position);
     }
 
@@ -82,7 +82,7 @@ public class RecycleViewAdapterPerPro extends RecyclerView.Adapter<RecycleViewAd
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
                     // Retrieve the clicked item
-                    PersonalPro clickedItem = list.get(position);
+                    PersonalProject clickedItem = list.get(position);
                     // Start a new activity with the information of the clicked item
                     Intent intent = new Intent(view.getContext(), UpdateDeletePerProActivity.class);
                     intent.putExtra("projectId", clickedItem.getId());
